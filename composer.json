@@ -36,7 +36,7 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/",
-            "Commune\\Studio\\": "commune/studio"
+            "Commune\\Studio\\": "commune/studio/"
         },
         "classmap": [
             "database/seeds",

@@ -12,11 +12,13 @@ namespace Commune\Studio\Providers;
 use Commune\Chatbot\App\Abilities\Supervise;
 use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\ServiceProvider;
+use Commune\Studio\Abilities\IsSupervisor;
 
 class AbilitiesServiceProvider extends ServiceProvider
 {
     protected $supervisors = [
-        'testUserId',
+        'testUserName',
+        '127.0.0.1',
     ];
 
     public function boot($app)
@@ -26,23 +28,7 @@ class AbilitiesServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(Supervise::class, function(){
-
-            $ids = $this->supervisors;
-            return new class($ids) implements Supervise {
-
-                protected $ids;
-
-                public function __construct(array $ids)
-                {
-                    $this->ids = $ids;
-                }
-
-                public function isAllowing(Conversation $conversation): bool
-                {
-                    $id = $conversation->getChat()->getUserId();
-                    return in_array($id, $this->ids);
-                }
-            };
+            return new IsSupervisor($this->supervisors);
         });
     }
 

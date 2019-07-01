@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use Commune\Chatbot\Laravel\Commands\TcpServer;
 use Commune\Chatbot\Laravel\Commands\Tinker;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -14,7 +15,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Tinker::class
+        TcpServer::class,
+        Tinker::class,
     ];
 
     /**
