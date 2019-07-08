@@ -30,11 +30,11 @@ return [
         // 管理 nlu example 的组件, /redirect nlu.examples.manager 可以直达.
         \Commune\Chatbot\App\Components\NLUExamplesComponent::class => [
             // 存储例句的json文件
-            'repository' => storage_path('/chatbot/nlu/examples.json'),
+            'repository' => base_path('commune/data/nlu/examples.json'),
         ],
         // 使用文件来加载意图的组件.
         \Commune\Chatbot\App\Components\SimpleFileIntentComponent::class => [
-            'resourcePath' => storage_path('/chatbot/sfi/'),
+            'resourcePath' => base_path('commune/data/sfi/'),
         ],
         // rasa 组件配置. 了解详情请查看 rasa.com
         \Commune\Chatbot\App\Components\RasaComponent::class => [
@@ -43,7 +43,7 @@ return [
             'pipe' => \Commune\Chatbot\App\Components\Rasa\RasaNLUPipeImpl::class,
             // 计算意图命中的阈值. 低于阈值的不列入可能意图.
             'threshold' => 70,
-            'output' => realpath(__DIR__ .'/../../commune/rasa/data/nlu.md'),
+            'output' => base_path('commune/rasa/data/nlu.md'),
             'synonym' => [
                 //SynonymOption::stub(),
             ],
@@ -54,6 +54,14 @@ return [
                 //RegexOption::stub(),
             ]
         ],
+        // 系统自带的 context 的loader
+        \Commune\Chatbot\App\Components\PredefinedIntComponent::class,
+        // 简单闲聊的组件. 可以在这里编辑闲聊.
+        \Commune\Chatbot\App\Components\SimpleChatComponent::class => [
+            'resourcePath' => base_path('commune/data/chats')
+        ],
+        // 管理消息意图识别记录的组件.
+        \Commune\Studio\Components\IntentLogComponent::class,
     ],
     // 预定义的系统服务, 在这里可更改 service provider
     'baseServices' => \Commune\Chatbot\Config\Services\BaseServiceConfig::stub(),
@@ -105,7 +113,7 @@ return [
 
     'host' => [
         // 默认的对话语境.
-        'rootContextName' => \Commune\Demo\App\Contexts\Welcome::class,
+        'rootContextName' => \Commune\Demo\App\Contexts\TestCase::class,
         // 可回溯的对话断点数量.
         'maxBreakpointHistory' => 10,
         // 运行对话逻辑时, 语境变化的最大次数. 超过可能出现了重定向.
@@ -116,18 +124,25 @@ return [
         'sessionCacheSeconds' => 60,
         // session 中经历的管道.
         'sessionPipes' => [
+            // 默认回复的消息.
+            \Commune\Chatbot\App\SessionPipe\DefaultReplyPipe::class,
+            // 处理事件类消息的管道.
+            \Commune\Studio\SessionPipes\EventMsgHandler::class,
             // 用户可用的命令.
             \Commune\Studio\SessionPipes\UserCommands::class,
             // 系统可用的命令.
             \Commune\Studio\SessionPipes\Analyser::class,
+            // 记录NLU中间件拿到的意图
+            \Commune\Studio\Components\IntentLog\IntentLogPipe::class,
             // 本组件, 可以使用 #intentName# 直接命中某个意图, 主要用于测试.
             \Commune\Chatbot\App\SessionPipe\MarkedIntentPipe::class,
             // 优先级最高, 用于导航的意图中间件.
             \Commune\Chatbot\App\SessionPipe\NavigationPipe::class,
             // 使用rasa 匹配意图的中间件.
-            // \Commune\Chatbot\App\Components\Rasa\RasaNLUPipe::class,
+            \Commune\Chatbot\App\Components\Rasa\RasaNLUPipe::class,
         ],
-        //
+        // 这里的intent会对每一个请求进行强制的意图识别
+        // 命中的话优先执行.
         'navigatorIntents' => [
         ],
         // session 预定义的记忆.

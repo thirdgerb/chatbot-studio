@@ -15,7 +15,7 @@ class CreateChatbotBreakpointsTable extends Migration
     public function up()
     {
         Schema::create(TableSchema::BREAKPOINTS_TABLE, function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             TableSchema::id('breakpoint_id', $table);
             TableSchema::scope($table);
 

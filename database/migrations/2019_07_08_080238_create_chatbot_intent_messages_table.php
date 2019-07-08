@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use Commune\Chatbot\Laravel\Database\TableSchema;
 
-class CreateChatbotMessagesTable extends Migration
+class CreateChatbotIntentMessagesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,17 +14,19 @@ class CreateChatbotMessagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('chatbot_messages', function (Blueprint $table) {
+        Schema::create('chatbot_intent_messages', function (Blueprint $table) {
             $table->bigIncrements('id');
-
-            TableSchema::id('reply_to_id', $table);
             TableSchema::scope($table);
-
-            $table->binary('message_data');
-            $table->boolean('from_user');
+            $table->string('user_name', 200)->default('');
             $table->string('message_type', 200)->default('');
+            $table->string('message_text', 5000)->default('');
+            $table->string('matched_intent', 200)->default('');
+            $table->string('matched_entities', 5000)->default('');
+            $table->string('nlu_intents', 5000)->default('');
+            $table->boolean('session_heard')->default(false);
 
             TableSchema::scopeIndex($table);
+            $table->index(['matched_intent'], 'intent_idx');
             $table->timestamps();
         });
     }
@@ -36,6 +38,6 @@ class CreateChatbotMessagesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('chatbot_messages');
+        Schema::dropIfExists('chatbot_intent_messages');
     }
 }

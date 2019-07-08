@@ -15,8 +15,7 @@ class CreateChatbotSessionDataTable extends Migration
     public function up()
     {
         Schema::create(TableSchema::SESSION_DATA_TABLE, function (Blueprint $table) {
-            $table->increments('id');
-
+            $table->bigIncrements('id');
             TableSchema::id('session_data_id', $table);
             $table->string('session_data_type', 60)
                 ->comment('session data type')

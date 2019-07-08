@@ -8,13 +8,13 @@ return [
 
     'system' => [
         'platformNotAvailable' => '系统不可用',
-        'chatIsTooBusy' => '输入太频繁',
-        'systemError' => '系统错误',
+        'chatIsTooBusy' => '输入太频繁, 请稍后再试',
+        'systemError' => '系统发生错误, 惭愧...',
     ],
 
     'dialog' => [
-        'farewell' => '再见!',
-        'missMatched' => '没有明白什么意思',
+        'farewell' => '再见, 欢迎下次再来!',
+        'missMatched' => '不好意思...没明白啥意思...',
     ],
 
     'command' => [
@@ -34,6 +34,7 @@ return [
 
     'errors' => [
         'badAnswer' => '您输入的信息不正确, 请重新输入',
+        'mustBeSupervisor' => '只有管理员允许访问当前语境',
     ],
 
     'messageTypeNames' => [

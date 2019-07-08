@@ -1,60 +1,208 @@
-## intent:greet
-- 你好
+
+## intent:Commune.Demo.App.Cases.Wheather.TellWeatherInt 
+- [今天](date)天气怎么样?
+- 我想知道[明天](date)的天气如何
+- [北京](city)[后天](date)什么天气啊
+- 气温如何?
+- [上海](city)[大后天](date)下雨吗?
+- 你知道[广州]的天气吗
+- 请问[明天](date)下雨吗
+- [后天](date)多少度啊?
+- [明天](date)是晴天吗?
+- [长沙](date)下雨了吗?
+
+## intent:rasa.manager 
+- 测试意图命中
+- 测试命中的意图
+- 测试命中了什么意图
+- 测试 matched intent
+- 查看命中的意图
+- 测试意图命中
+- 测试命中的意图
+- 测试命中了什么意图
+- 测试 matched intent
+- 查看命中的意图
+
+## intent:navigation.backward 
+- 回到上一步
+- 返回上一步
+- 回到上个问题
+- 回到刚才那个问题
+- 返回前面的问题
+- 再说一次上一个问题
+- last step
+- 回到上一步
+- 返回上一步
+- 回到上个问题
+- 回到刚才那个问题
+- 返回前面的问题
+- 再说一次上一个问题
+- last step
+
+## intent:navigation.cancel 
+- cancel
+- 退出这个话题
+- 取消吧
+- 结束这个议题
+- 不用继续了
+- 可以取消了
+- 这个事情就这样吧
+- 别继续了
+- cancel
+- 退出这个话题
+- 取消吧
+- 结束这个议题
+- 不用继续了
+- 可以取消了
+- 这个事情就这样吧
+- 别继续了
+
+## intent:navigation.restart 
+- restart
+- 重来一遍吧
+- 从头开始吧
+- 重新来一次
+- 从第一步再来
+- 能不能重新开始
+- 我想要重来一遍
+- restart
+- 重来一遍吧
+- 从头开始吧
+- 重新来一次
+- 从第一步再来
+- 能不能重新开始
+- 我想要重来一遍
+
+## intent:navigation.quit 
+- 结束对话
+- 今天先说到这儿
+- 就说到这里吧
+- 对话可以结束了
+- 今天的对话到此为止了
+- 结束对话
+- 今天先说到这儿
+- 就说到这里吧
+- 对话可以结束了
+- 今天的对话到此为止了
+
+## intent:navigation.repeat 
+- repeat
+- 再说一遍
+- 刚才说什么
+- 现在说的是啥
+- 你问什么
+- 你要干什么来着
+- 你刚才要我干嘛
+- repeat
+- 再说一遍
+- 刚才说什么
+- 现在说的是啥
+- 你问什么
+- 你要干什么来着
+- 你刚才要我干嘛
+
+## intent:attitudes.ok 
+- ok
+- okay
+- good
+- very good
+- excellent
+- 好啊
+- 太好了
+- 非常好
+- 不错
+- 真棒
+- 挺好的呀
+- 就这样吧
+- 这样就行
+- ok
+- okay
+- good
+- very good
+- excellent
+- 好啊
+- 太好了
+- 非常好
+- 不错
+- 真棒
+- 挺好的呀
+- 就这样吧
+- 这样就行
+
+## intent:attitudes.deny 
+- no
+- nope
+- negative
+- not ok
+- 否认
+- 否定
+- 不是
+- 不对
+- 错了
+- 并非如此
+- no
+- nope
+- negative
+- not ok
+- 否认
+- 否定
+- 不是
+- 不对
+- 错了
+- 并非如此
+
+## intent:attitudes.affirm 
+- yes
+- ok
+- good
+- positive
+- 确认
+- 确定
+- 是的
+- 可以
+- 好的
+- 没错
+- yes
+- ok
+- good
+- positive
+- 确认
+- 确定
+- 是的
+- 可以
+- 好的
+- 没错
+
+## intent:attitudes.greet 
 - hello
 - hi
+- good morning
+- good afternoon
+- good night
+- 你好
+- 您好
+- 嗨
 - 早上好
+- 中午好
+- 晚上好
+- hello
+- hi
+- good morning
+- good afternoon
+- good night
+- 你好
+- 您好
+- 嗨
+- 早上好
+- 中午好
 - 晚上好
 
-## intent:navigation.goodbye
-- bye
-- goodbye
-- 再见
-- 拜拜
-- 88
-
-## intent:affirm
-- yes
-- 是的
-- 当然
-- 对
-- 不错
-- 说得对
-- 可以
-- 好
-- 正确
-
-## intent:deny
-- no
-- 不对
-- 不是
-- 不要
-- 没门
-- 没戏
-- 我不这么想
-
-## intent:thanks
-- 谢谢
-- 谢了
-- 辛苦了
-
-## intent:research
-- 帮我查一下我的[流量](item)有多少
-- 帮我查一下我这里还有多少[流量](item)
-- 帮我查一下我[一个月](time)[消费](item)多少
-- 帮我查查我[月租](item)多少
-- 帮我看看这个手机的[流量](item)
-- 我想问下我用了多少[话费](item)
-- 帮我看看还剩多少[流量](item)
-- 我现在还有多少话费[余额](item)啊?
-- 查一下话费[余额](item)
-- 我那个[流量](item)还有多少
-- 你好查下我这个[流量](item)还有多少啊
-- 喂你好棒我查一下我的[流量](item)
-- 帮我查查我[上个月](time)的[流量](item)有多少
-- 给我查查我的[流量](item)
-- 给我查查我的[话费](item)使用情况
-- 我想看一下[话费](item)
-- 你给我查下我的月[消费](item)情况
-- 我的[话费](item)还剩多少
-
-
+## intent:attitudes.thanks 
+- thanks
+- thank you
+- 谢谢你
+- 感谢你
+- thanks
+- thank you
+- 谢谢你
+- 感谢你

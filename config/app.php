@@ -176,6 +176,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         \App\Providers\CommuneStudioServiceProvider::class,
+        \Commune\Chatbot\Wechat\CommuneWechatServiceProvider::class,
     ],
 
     /*

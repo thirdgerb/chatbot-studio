@@ -15,8 +15,7 @@ class CreateChatbotContextsTable extends Migration
     public function up()
     {
         Schema::create(TableSchema::CONTEXTS_TABLE, function (Blueprint $table) {
-
-            $table->increments('id');
+            $table->bigIncrements('id');
             TableSchema::id('context_id', $table);
             TableSchema::scope($table);
 

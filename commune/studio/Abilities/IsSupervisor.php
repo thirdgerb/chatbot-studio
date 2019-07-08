@@ -18,7 +18,7 @@ class IsSupervisor implements Supervise
 
     public function isAllowing(Conversation $conversation): bool
     {
-        $id = $conversation->getUser()->getName();
+        $id = $conversation->getUser()->getId();
         return in_array($id, $this->ids);
     }
 

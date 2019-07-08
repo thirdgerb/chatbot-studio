@@ -5,12 +5,9 @@ namespace Commune\Studio\SessionPipes;
 
 
 use Commune\Chatbot\App\Abilities\Supervise;
-use Commune\Chatbot\App\Commands\Analysis\ContextRepoCmd;
-use Commune\Chatbot\App\Commands\Analysis\MemoryCmd;
-use Commune\Chatbot\App\Commands\Analysis\RedirectCmd;
-use Commune\Chatbot\App\Commands\Analysis\StatusCmd;
-use Commune\Chatbot\App\Commands\Analysis\WhereCmd;
-use Commune\Chatbot\OOHost\Command\Help;
+use Commune\Chatbot\Laravel\SessionCommands\RunningSpyCmd;
+use Commune\Chatbot\App\Commands\Analysis;
+use Commune\Chatbot\OOHost\Command\HelpCmd;
 use Commune\Chatbot\OOHost\Command\SessionCommandPipe;
 use Commune\Chatbot\OOHost\Session\Session;
 
@@ -21,12 +18,12 @@ class Analyser extends SessionCommandPipe
 {
     // 命令的名称.
     protected $commands = [
-        Help::class,
-        WhereCmd::class,
-        StatusCmd::class,
-        MemoryCmd::class,
-        RedirectCmd::class,
-        ContextRepoCmd::class
+        HelpCmd::class,
+        Analysis\WhereCmd::class,
+        Analysis\MemoryCmd::class,
+        Analysis\RedirectCmd::class,
+        Analysis\ContextRepoCmd::class,
+        RunningSpyCmd::class,
     ];
 
     // 定义一个 command mark

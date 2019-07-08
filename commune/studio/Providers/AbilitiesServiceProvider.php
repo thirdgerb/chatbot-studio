@@ -10,14 +10,13 @@ namespace Commune\Studio\Providers;
 
 
 use Commune\Chatbot\App\Abilities\Supervise;
-use Commune\Chatbot\Blueprint\Conversation\Conversation;
 use Commune\Chatbot\Blueprint\ServiceProvider;
 use Commune\Studio\Abilities\IsSupervisor;
 
 class AbilitiesServiceProvider extends ServiceProvider
 {
     protected $supervisors = [
-        'testUserName',
+        'testUserId',
         '127.0.0.1',
     ];
 
