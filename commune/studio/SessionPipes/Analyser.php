@@ -24,6 +24,7 @@ class Analyser extends SessionCommandPipe
         Analysis\RedirectCmd::class,
         Analysis\ContextRepoCmd::class,
         RunningSpyCmd::class,
+        Analysis\WhoAmICmd::class,
     ];
 
     // 定义一个 command mark

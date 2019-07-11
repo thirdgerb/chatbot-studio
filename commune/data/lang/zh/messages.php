@@ -2,8 +2,11 @@
 
 
 return [
+
+    /*------ chatbot 默认配置的参数 ------*/
+
     'hello' => [
-        'world'  => '你好,世界',
+        'world'  => '您好,世界',
     ],
 
     'system' => [
@@ -15,6 +18,7 @@ return [
     'dialog' => [
         'farewell' => '再见, 欢迎下次再来!',
         'missMatched' => '不好意思...没明白啥意思...',
+        'continue' => '输入 "." 继续',
     ],
 
     'command' => [
@@ -30,6 +34,7 @@ return [
         'default' => '请输入 %name% (%default%)',
         'needs' => '您可能需要:',
         'needMore' => '您还有别的需要吗?',
+        'continue' => '输入 "." 继续',
     ],
 
     'errors' => [
@@ -39,6 +44,10 @@ return [
 
     'messageTypeNames' => [
         \Commune\Chatbot\App\Messages\Text::class => '文字',
-    ]
+    ],
 
+
+    /*------ Demo ------*/
+
+    'demo' => include __DIR__ .'/includes/demo.php',
 ];

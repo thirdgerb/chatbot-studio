@@ -32,7 +32,7 @@ return [
         'max_retries' => 1,
         'retry_delay' => 500,
         'timeout' => 5.0,
-        // 'base_uri' => 'https://api.weixin.qq.com/', // 如果你在国外想要覆盖默认的 url 的时候才使用，根据不同的模块配置不同的 uri
+        // 'base_uri' => 'https://api.weixin.qq.com/', // 如果您在国外想要覆盖默认的 url 的时候才使用，根据不同的模块配置不同的 uri
     ],
 
     /**
