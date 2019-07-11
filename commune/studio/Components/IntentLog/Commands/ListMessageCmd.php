@@ -62,25 +62,27 @@ class ListMessageCmd extends SessionCommand
 
         $data = array_map(function($o){
             $i = (array) $o;
-            return [
+            $arr = [
                 'sid' => $i['session_id'],
                 'cid' => $i['chat_id'],
                 'uid' => $i['user_id'],
                 'un' => $i['user_name'],
-                'txt' => $i['message_text'],
+                'txt' => mb_substr($i['message_text'], 0, 100),
                 'mi' => $i['matched_intent'],
                 'sh' => $i['session_heard'],
                 'ca' => $i['created_at'],
             ];
+
+            $str = '';
+            foreach ($arr as $key => $value) {
+                $str .= "[$key] : $value \n";
+            }
+            return $str;
         }, $data);
 
+
         $this->say()->info("消息如下: \n"
-            . json_encode(
-                $data,
-                JSON_UNESCAPED_UNICODE
-                | JSON_UNESCAPED_SLASHES
-                | JSON_PRETTY_PRINT
-            )
+            . implode("\n", $data)
         );
     }
 

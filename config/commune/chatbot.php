@@ -1,6 +1,7 @@
 <?php
 
 use Commune\Chatbot\OOHost\Session\Scope;
+use Commune\Chatbot\App\Callables\Actions\Redirector;
 
 return [
     // debug 模式会记录更多的日志.
@@ -25,16 +26,27 @@ return [
     'components' => [
         // 加载自己默认的context, intent, memory 类
         \Commune\Studio\StudioLoader::class,
-        // 加载 demo 里的contexts和intents. 没啥用
-        \Commune\Demo\App\DemoOption::class,
+        // 加载 demo 里的contexts和intents.
+        \Commune\Studio\Components\DemoComponent::class,
         // 管理 nlu example 的组件, /redirect nlu.examples.manager 可以直达.
         \Commune\Chatbot\App\Components\NLUExamplesComponent::class => [
             // 存储例句的json文件
             'repository' => base_path('commune/data/nlu/examples.json'),
         ],
         // 使用文件来加载意图的组件.
-        \Commune\Chatbot\App\Components\SimpleFileIntentComponent::class => [
-            'resourcePath' => base_path('commune/data/sfi/'),
+        \Commune\Chatbot\App\Components\SimpleFileChatComponent::class => [
+            'groups' => [
+                [
+                    'id' => 'demo',
+                    'resourcePath' => base_path('commune/data/sfi/demo'),
+                    'intentAlias' => [],
+                    'defaultSuggestions' => [
+                        '返回' => [ Redirector::class, 'backward'],
+                        '结束' => [ Redirector::class, 'fulfill'],
+                    ],
+                    'question' => '您可能需要:'
+                ],
+            ]
         ],
         // rasa 组件配置. 了解详情请查看 rasa.com
         \Commune\Chatbot\App\Components\RasaComponent::class => [
@@ -54,7 +66,7 @@ return [
                 //RegexOption::stub(),
             ]
         ],
-        // 系统自带的 context 的loader
+        // 系统自带的 context 的loader. 可选. 主要提供常见的打招呼之类的意图.
         \Commune\Chatbot\App\Components\PredefinedIntComponent::class,
         // 简单闲聊的组件. 可以在这里编辑闲聊.
         \Commune\Chatbot\App\Components\SimpleChatComponent::class => [
@@ -85,13 +97,13 @@ return [
     ],
     'translation' => [
         'loader' => 'php',
-        'resourcesPath' => resource_path('/lang/chatbot'),
+        'resourcesPath' => base_path('commune/data/lang/'),
         'defaultLocale' => 'zh',
         'cacheDir' => NULL,
     ],
     'logger' => [
         'name' => 'chatbot',
-        'path' => storage_path('/logs/chatbot.log'),
+        'path' => storage_path('logs/chatbot.log'),
         'days' => 7,
         'level' => 'debug',
         'bubble' => true,
@@ -113,7 +125,7 @@ return [
 
     'host' => [
         // 默认的对话语境.
-        'rootContextName' => \Commune\Demo\App\Contexts\TestCase::class,
+        'rootContextName' => \Commune\Studio\Components\Demo\DemoHome::class,
         // 可回溯的对话断点数量.
         'maxBreakpointHistory' => 10,
         // 运行对话逻辑时, 语境变化的最大次数. 超过可能出现了重定向.
