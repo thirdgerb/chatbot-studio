@@ -25,8 +25,11 @@ class AbilitiesServiceProvider extends ServiceProvider
         $this->app->bind(Supervise::class, function(){
 
             $supervisorStr = env('COMMUNE_SUPERVISORS', '');
-            $supervisors = explode('|', $supervisorStr);
-            $supervisors = count($supervisors) > 1 ? $supervisors : [];
+            if (empty($supervisorStr)) {
+                $supervisors = [];
+            } else {
+                $supervisors = explode('|', $supervisorStr);
+            }
 
             return new IsSupervisor($supervisors);
         });

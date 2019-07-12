@@ -50,7 +50,7 @@ class NLUScript extends ScriptDef
     public function __hearing(Hearing $hearing): void
     {
         $hearing
-            ->is('b', [Redirector::class, 'final']);
+            ->is('b', new ToNext('final'));
 
     }
 
