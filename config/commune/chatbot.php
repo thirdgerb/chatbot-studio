@@ -152,7 +152,7 @@ return [
                 \Commune\Chatbot\App\SessionPipe\NavigationPipe::class,
 
             ],
-            env('COMMUNE_NLU', '') === 'true'
+            env('COMMUNE_NLU', '') === true
                 ?  [
                     // 使用rasa 匹配意图的中间件.
                     \Commune\Chatbot\App\Components\Rasa\RasaNLUPipe::class,
