@@ -135,24 +135,30 @@ return [
         // session 用到的数据缓存的时间.
         'sessionCacheSeconds' => 60,
         // session 中经历的管道.
-        'sessionPipes' => [
-            // 默认回复的消息.
-            \Commune\Chatbot\App\SessionPipe\DefaultReplyPipe::class,
-            // 处理事件类消息的管道.
-            \Commune\Studio\SessionPipes\EventMsgHandler::class,
-            // 用户可用的命令.
-            \Commune\Studio\SessionPipes\UserCommands::class,
-            // 系统可用的命令.
-            \Commune\Studio\SessionPipes\Analyser::class,
-            // 记录NLU中间件拿到的意图
-            \Commune\Studio\Components\IntentLog\IntentLogPipe::class,
-            // 本组件, 可以使用 #intentName# 直接命中某个意图, 主要用于测试.
-            \Commune\Chatbot\App\SessionPipe\MarkedIntentPipe::class,
-            // 优先级最高, 用于导航的意图中间件.
-            \Commune\Chatbot\App\SessionPipe\NavigationPipe::class,
-            // 使用rasa 匹配意图的中间件.
-            \Commune\Chatbot\App\Components\Rasa\RasaNLUPipe::class,
-        ],
+        'sessionPipes' => array_merge([
+                // 默认回复的消息.
+                \Commune\Chatbot\App\SessionPipe\DefaultReplyPipe::class,
+                // 处理事件类消息的管道.
+                \Commune\Studio\SessionPipes\EventMsgHandler::class,
+                // 用户可用的命令.
+                \Commune\Studio\SessionPipes\UserCommands::class,
+                // 系统可用的命令.
+                \Commune\Studio\SessionPipes\Analyser::class,
+                // 记录NLU中间件拿到的意图
+                \Commune\Studio\Components\IntentLog\IntentLogPipe::class,
+                // 本组件, 可以使用 #intentName# 直接命中某个意图, 主要用于测试.
+                \Commune\Chatbot\App\SessionPipe\MarkedIntentPipe::class,
+                // 优先级最高, 用于导航的意图中间件.
+                \Commune\Chatbot\App\SessionPipe\NavigationPipe::class,
+
+            ],
+            env('COMMUNE_NLU', '') === 'true'
+                ?  [
+                    // 使用rasa 匹配意图的中间件.
+                    \Commune\Chatbot\App\Components\Rasa\RasaNLUPipe::class,
+                ]
+                : []
+        ),
         // 这里的intent会对每一个请求进行强制的意图识别
         // 命中的话优先执行.
         'navigatorIntents' => [

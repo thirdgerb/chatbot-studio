@@ -132,7 +132,7 @@ class DemoHome extends OOContext
 
         if (!$this->toldWhatToDo) {
             $menu = [
-                '您能做些什么?' => 'help',
+                '你能做些什么?' => 'help',
             ];
         } else {
             $menu = [];
