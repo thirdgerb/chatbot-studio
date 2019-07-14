@@ -15,10 +15,6 @@ use Commune\Studio\Abilities\IsSupervisor;
 
 class AbilitiesServiceProvider extends ServiceProvider
 {
-    protected $supervisors = [
-        'testUserId',
-        '127.0.0.1',
-    ];
 
     public function boot($app)
     {
@@ -27,7 +23,15 @@ class AbilitiesServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(Supervise::class, function(){
-            return new IsSupervisor($this->supervisors);
+
+            $supervisorStr = env('COMMUNE_SUPERVISORS', '');
+            if (empty($supervisorStr)) {
+                $supervisors = [];
+            } else {
+                $supervisors = explode('|', $supervisorStr);
+            }
+
+            return new IsSupervisor($supervisors);
         });
     }
 

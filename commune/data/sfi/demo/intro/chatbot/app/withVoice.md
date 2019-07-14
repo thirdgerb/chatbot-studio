@@ -1,10 +1,13 @@
-description: description
+description: 与语音相结合的应用
 suggestions:
+    - introduce
+    - ./
+    - intro.chatbot.chatClassification
+    - intro.chatbot.chatInterface
 examples:
 ---
 
-
-与语音相结合的功能:
+与语音相结合的应用:
 
 - 智能音箱 : 目前比较火的应用方向, 只能算是一种试水.
 - 智能耳机 : 通过与耳机对话操纵智能设备, 解放身体姿势

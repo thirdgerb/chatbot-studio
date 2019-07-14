@@ -8,7 +8,6 @@ use Commune\Chatbot\App\Callables\Actions\Redirector;
 use Commune\Chatbot\App\Callables\Actions\ToNext;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\App\Components\Rasa\Contexts\RasaManagerInt;
-use Commune\Chatbot\App\Components\SimpleChat\Callables\SimpleChatAction;
 use Commune\Chatbot\App\Components\SimpleChat\Tasks\SimpleChatTask;
 use Commune\Chatbot\App\Contexts\ScriptDef;
 use Commune\Chatbot\App\Traits\AskContinueTrait;
@@ -19,58 +18,140 @@ use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Demo\App\Cases\Wheather\TellWeatherInt;
 use Commune\Studio\Components\Demo\Supports\ScriptTrait;
+use Illuminate\Support\Collection;
 
 class NLUScript extends ScriptDef
 {
     use ScriptTrait, AskContinueTrait;
 
-    const DESCRIPTION = '自然语言识别测试用例';
+    const DESCRIPTION = '自然语言测试用例';
 
+    public function __onStart(Stage $stage): Navigator
+    {
+        return $stage->dialog->goStage('final');
+    }
 
     public function __onFinal(Stage $stage): Navigator
     {
         return $stage
             ->onFallback(function(Dialog $dialog) {
-                return $dialog->say()->info('测试结束');
+                return $dialog->say()->info('回到自然语言测试用例. ');
             })
             ->onFallback($this->callContinueTo('final'))
-            ->component(new Menu(
-                '您可能需要:',
-                [
-                    '查询天气用例' => 'toWeather',
-                    '测试闲聊' => 'chat',
-                    RasaManagerInt::class,
-                    SimpleChatTask::class,
-                    '查看介绍' => 'startConversation',
-                    '返回' => [Redirector::class, 'fulfill'],
-                ]
-            ));
+            ->component(
+                (new Menu(
+                    '您可能需要:',
+                    [
+                        '查询天气用例' => 'toWeather',
+                        '闲聊测试' => 'chat',
+                        RasaManagerInt::class,
+                        SimpleChatTask::class,
+                        '查看介绍' => 'startConversation',
+                        '查看源码' => 'source',
+                        '返回' => [Redirector::class, 'fulfill'],
+                    ]
+                ))->hearing(function(Hearing $hearing) {
+                    $hearing
+                        ->isAnyIntent();
+                })
+            );
     }
 
-    public function __hearing(Hearing $hearing): void
-    {
-        $hearing
-            ->is('b', [Redirector::class, 'final']);
 
+    public function __onSource(Stage $stage) : Navigator
+    {
+        return $stage->buildTalk()
+            ->info('源码在: https://github.com/thirdgerb/chatbot-studio/blob/develop/commune/studio/Components/Demo/Cases/NLUScript.php')
+            ->goStage('final');
     }
 
     public function __onChat(Stage $stage) : Navigator
     {
-        return $stage
-            ->buildTalk()
-            ->info(<<<EOF
-在实现了多轮对话之后, 闲聊就变成了一个非常简单的功能. 
-本质上就是匹配一个意图, 随机挑选一个回复, 纯粹堆工作量, 不然就要调用别人的语料库. 
+        $builder = $stage
+            ->buildTalk();
 
-由于训练机器人的时间成本很高, 要提升精度就更麻烦 (现在仍然是人工智障). 所以目前我只做了最简单的闲聊例子:
+        $memory = $this->getSession()->memory;
+        $t = $memory['on_user']['nlu.chat'] ?? 0;
+        $t += 1;
+        $memory['on_user']['nlu.chat'] = $t;
 
-可以试着和我说说 "你好" 类似的问候语, 看看回复 (其实还有隐藏的例子). 输入 'b' 退出测试.
+
+        if ($t === 1) {
+            $builder->info(
+                <<<EOF
+本 demo 的重点在于多轮对话, 也使用开源项目 rasa 简单做了自然语言的闲聊功能.
+
+配置, 训练, 打磨闲聊机器人的时间成本很高, 而且闲聊并非本项目重点, 目前仅做了简单的闲聊.
+未来NLU部分应该是调用AI云的api
+
+EOF
+
+            );
+
+        }
+
+        return $builder->info(
+            <<<EOF
+可以试着和我说说 "你好" 类似的问候语测试. 输入 'b' 退出测试.
+
+可在此 https://github.com/thirdgerb/chatbot-studio/blob/master/commune/data/chats/demo.yml 看到所有已配置的闲聊内容.
+
+由于语料非常少, 目前自然语言识别效果很差. 您可以尝试以下对白:
+
+- 你好
+- 讲笑话
+- 如何联系你
+- 新说唱谁能夺冠
 EOF
             )
             ->wait()
             ->hearing()
-                ->end(new SimpleChatAction('demo'));
+            ->is('b', new ToNext('final'))
+            ->hasKeywords([['笑话', '说笑', '逗', '搞笑']], $this->insertIntent('ask.joke'))
+            ->hasKeywords([ ['联系', 'email']], $this->insertIntent('introduce.contact'))
+            ->hasKeywords(['说唱', ['夺冠', '冠军', '第一', '牛']], $this->insertIntent('rapofchina.champion'))
+            ->defaultFallback()
+            ->end(function(Dialog $dialog){
 
+                $intent = $dialog->session->incomingMessage->getMostPossibleIntent();
+
+                $msg = isset($intent) ? "命中意图 $intent;" : '未命中任何意图;';
+
+                $dialog
+                    ->say()
+                    ->info($msg. '没有命中任何闲聊 (由于时间精力和语料都缺, 现在还是人工智障). 
+请继续输入句子测试. 输入"b"退出测试');
+
+                return $dialog->wait();
+            });
+
+    }
+
+    protected function insertIntent(string $intent) : \Closure
+    {
+        $intent = trim($intent);
+        return function(Dialog $dialog) use ($intent) {
+            $incoming = $dialog->session->incomingMessage;
+
+            $possible = $incoming->getMostPossibleIntent();
+            if (isset($possible) && $possible == $intent) {
+                return null;
+            }
+
+            $dialog->say()->info("(没命中意图, 命中了本地关键字...)");
+
+            $incoming->addPossibleIntent(
+                $intent,
+                new Collection([]),
+                100
+            );
+
+            $names = $incoming->getHighlyPossibleIntentNames();
+            $names[] = $intent;
+            $incoming->setHighlyPossibleIntentNames($names);
+
+            return null;
+        };
     }
 
     public function __onToWeather(Stage $stage) : Navigator
@@ -100,6 +181,7 @@ EOF
 )
             ->wait()
             ->hearing()
+                ->is('b', new ToNext('final'))
                 ->isIntent(TellWeatherInt::class)
                 ->isAnyIntent(function(Dialog $dialog, IntentMessage $message) {
                     $dialog->say([
@@ -121,7 +203,7 @@ EOF
                 ->end(function(Dialog $dialog){
 
                     $dialog->say()
-                        ->info('没有命中任何意图? 可以继续尝试, 输入"b"退出测试');
+                        ->info('没有命中任何意图? 可以继续尝试, 输入"b"返回');
                     return $dialog->wait();
                 });
 
@@ -131,21 +213,17 @@ EOF
     {
         return [
             <<<EOF
-在开始自然语言测试用例前, 有一大段介绍. 您可以随时输入 'b' 结束介绍.
-EOF
-            ,
-            <<<EOF
 自然语言识别技术的发展, 我认为是 对话交互方式 即将全面开花的四大技术支柱之一.
 
 我理解的四大支柱是: 自然语言识别(语音, 语义), 智能设备 + 物联网, 富文本即时通讯工具普及, 以及多轮对话机制成熟.
 EOF
             ,
             <<<EOF
-自从机器学习技术推广, 自然语言技术在语音, 语义两个方面得到了长足发展. 具体应用到多轮对话的话, 语音技术目前比语义理解更成熟. 
-            
-我个人认为(尊重不同意见), 其实对于多轮对话交互而言, 纯粹自然语言理解不是必要的. 
+自从机器学习技术推广, 自然语言技术在语音, 语义两个方面得到了长足发展. 具体应用到多轮对话的话, 语音技术目前比语义理解更成熟.
 
-我甚至认为, 极致追求对自然语言的彻底理解, 追求基于完全机器学习的多轮对话, 可能走了错路. 
+我个人认为(仅代表个人意见), 其实对于多轮对话交互而言, 纯粹自然语言理解不是绝对必要的.
+
+极致追求对自然语言的彻底理解, 追求基于完全机器学习的多轮对话, 可能走了错路.
 EOF
             ,
             <<<EOF
@@ -160,14 +238,14 @@ EOF
             <<<EOF
 目前自然语言理解的技术还在发展中. 纯粹自然对话的机器人, 主要用于语音 骚扰(划掉) 销售电话.
 
-就连智能客服的对话机器人, 也大量使用了猜你想问对用户意图进行引导. 
+就连智能客服的对话机器人, 也大量使用了猜你想问对用户意图进行引导.
 
-我认为现阶段可能要在"交互"下更多文章, 促进对话交互技术工业化, 产业化, 才能更好地反哺"自然语言识别".  
+我认为现阶段可能要在"交互"下更多文章, 促进对话交互技术工业化, 产业化, 才能更好地反哺"自然语言识别".
 EOF
             ,
             <<<EOF
 然而自然语言识别有其至关重要的好处.
- 
+
 最最本质的好处在于, 通过大量语料反复打磨, 让用户可以通过直觉对话, 直达意图. 既不需要去学习手册, 更不需要像浏览器进网站一样, 爬行一个层级非常深的菜单.
 
 没有高精度自然语言识别的多轮对话技术, 在语音机器人方面的价值大一些; 否则, 用户体验并不比网页和app更好.
@@ -175,15 +253,15 @@ EOF
             ,
 
             <<<EOF
-我目前使用的 NLU, 是基于rasa做的. rasa是一个开源项目, 我目前理解是对tensorflow, mitie 等软件做了工程上的封装, 使得我这样的小白也能使用.
+我目前使用的 NLU, 是基于rasa做的. rasa是一个开源项目, 我目前理解是对tensorflow, mitie 等软件做了工程上的封装, 使得我这样的外行也能使用.
 
-rasa nlu 可以将一段话匹配意图 (目前还不适合多段话多个意图), 并提取出参数 (entity). 而 commune/chatbot 会捕获提取该结果, 抽象化成 intent 对象 (类似命令行) , 应用到后续多轮对话逻辑中.  
+rasa nlu 可以将一段话匹配意图 (目前还不适合多段话多个意图), 并提取出参数 (entity). 而 commune/chatbot 会捕获提取该结果, 抽象化成 intent 对象 (类似命令行) , 应用到后续多轮对话逻辑中.
+
+由于nlu不是本项目的重点, 加之语料匮乏, 训练成本高, 所以暂时只是做了个示例.
 EOF
             ,
             <<<EOF
 以上就是所有介绍了. 本人是自然语言领域的外行, 谈到了很多个人理解, 贻笑大方. 若有不同意见请多指教.
-
-接下来进入测试
 EOF
 
         ];

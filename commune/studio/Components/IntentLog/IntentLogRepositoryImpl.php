@@ -60,7 +60,7 @@ class IntentLogRepositoryImpl implements IntentLogRepository
             ->getPossibleIntentCollection()
             ->toJson(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-        $data['session_heard'] = $session->isHeard();
+        $data['session_heard'] = $session->isHeard() ? 1 : 0;
         $data['updated_at'] = $data['created_at'] = new Carbon();
 
         $this->driver
