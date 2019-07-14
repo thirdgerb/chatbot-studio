@@ -1,0 +1,29 @@
+attitudes.diss:
+  examples:
+    - 你傻吗
+    - 你好蠢啊
+    - 这都不知道吗
+    - 做得太烂了
+    - 真是笨啊
+  replies:
+    - 非要这么说吗
+    - 我俩1v1见吧
+attitudes.laugh:
+  examples:
+    - 哈哈
+    - 哈哈哈哈
+    - 笑死我了
+    - 真好笑
+  replies:
+    - 你开心就好
+    - 笑什么...
+attitudes.greet:
+  replies:
+    - 您好~!
+    - hello!
+    - hi!
+attitudes.thanks:
+  replies:
+    - 客气了
+    - 不用谢
+    - 很高兴能有所帮助

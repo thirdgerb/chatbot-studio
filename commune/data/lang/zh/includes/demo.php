@@ -11,9 +11,11 @@ EOF
 
     'startConversation' =>
 <<<EOF
-您好, %name%. 这里是 commune/chatbot 项目的demo. 欢迎您的第%times%次访问. 
+您好, %user.name%. 欢迎您的第%times%次访问. 
 
-输入 "."  可以继续
+这里是"%self.desc%" %self.project% 项目的demo. 
+
+您可以在此了解本项目, 或尝试测试一下. 
 EOF
     ,
 

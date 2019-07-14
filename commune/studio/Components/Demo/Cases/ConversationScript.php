@@ -28,10 +28,6 @@ class ConversationScript extends ScriptDef
     {
     }
 
-    public function __hearing(Hearing $hearing): void
-    {
-        $hearing->is('b', new ToNext('final'));
-    }
 
     public function __onStart(Stage $stage): Navigator
     {
@@ -55,7 +51,8 @@ class ConversationScript extends ScriptDef
             ->onFallback($this->callContinueTo('final'))
             ->component(new Menu(
             <<<EOF
-由于目前 demo 所有的对话都是多轮对话本身, 所以目前仅准备了一个例子.
+由于本 demo 所有的对话都是多轮对话本身, 所以仅准备了一个例子.
+
 演示如何用多轮对话实现复杂的问卷调查 (非线性, 有计算逻辑, 有历史记忆, 可以重置, 生产级应用场景). 
             
 您可能需要:
@@ -64,18 +61,22 @@ EOF
             [
                 '问卷调查模拟:15秒读懂您的性格' => ReadPersonality::class,
                 '查看介绍' => 'startConversation',
+                '查看源码' => 'source',
                 '返回' => [Redirector::class, 'fulfill'],
             ]
         ));
     }
 
+    public function __onSource(Stage $stage) : Navigator
+    {
+        return $stage->buildTalk()
+            ->info('源码在: https://github.com/thirdgerb/chatbot-studio/blob/develop/commune/studio/Components/Demo/Cases/ConversationScript.php')
+            ->goStage('final');
+    }
+
     public static function getScripts(): array
     {
         return [
-            <<<EOF
-以下开始多轮对话的介绍. 输入'b'可结束介绍.
-EOF
-            ,
             <<<EOF
 常见的对话机器人, 在对话管理方面有两大类型:
 

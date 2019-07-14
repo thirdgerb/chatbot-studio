@@ -4,6 +4,7 @@
 namespace Commune\Studio\Components\Demo;
 
 
+use Commune\Chatbot\App\Callables\Actions\Redirector;
 use Commune\Chatbot\App\Callables\Actions\ToNext;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\App\Components\Predefined\Navigation\QuitInt;
@@ -45,48 +46,6 @@ class DemoHome extends OOContext
     {
     }
 
-    /**
-     * 判断用户是否首次访问, 会用不一样的逻辑来接待.
-     *
-     * 测试 MemoryDef, goStagePipes
-     *
-     * @param Stage $stage
-     * @return Navigator
-     */
-    public function __onStart(Stage $stage): Navigator
-    {
-        return $stage->buildTalk()
-            ->action(function(Dialog $dialog){
-
-                $status = UserStatus::from($this);
-                $status->loginTimes += 1;
-                $this->loginTimes = $status->loginTimes;
-
-                if ($this->loginTimes > 1 ) {
-
-                    return $dialog->goStage('welcome');
-                } else {
-                    return $dialog->goStagePipes(['firstVisit', 'welcome']);
-                }
-
-            });
-    }
-
-    /**
-     * 第一次访问要有个热情的拥抱.
-     *
-     * 测试 interceptor, next()
-     *
-     * @param Stage $stage
-     * @return Navigator
-     */
-    public function __onFirstVisit(Stage $stage) : Navigator
-    {
-        return $stage->buildTalk()
-            ->interceptor(new FirstMeet())
-            ->next();
-    }
-
 
     /**
      * 正常的欢迎.
@@ -96,25 +55,27 @@ class DemoHome extends OOContext
      * @param Stage $stage
      * @return Navigator
      */
-    public function __onWelcome(Stage $stage) : Navigator
+    public function __onStart(Stage $stage) : Navigator
     {
-        $next = $this->loginTimes == 1 ? 'confirmGuide' : 'menu';
         return $stage
-            ->talk(function(Dialog $dialog, User $user){
+            ->onFallback([Redirector::class, 'repeat'])
+            ->talk(function(Dialog $dialog){
 
                 $dialog->say([
-                        'name' => $user->getName(),
                         'times' => $this->loginTimes
                     ])
                     ->info('demo.startConversation');
 
-                return $dialog->wait();
+                return $dialog->goStage('menu');
 
-            }, function(Dialog $dialog, Message $message) use ($next){
+            }, function(Dialog $dialog, Message $message){
 
                 return $dialog->hear($message)
-                    ->component(new ContinueOrChat('demo', $next))
-                    ->end();
+                    ->isAnyIntent()
+                    ->interceptor(new SimpleChatAction())
+                    ->end(function(Dialog $dialog){
+                        return $dialog->repeat();
+                    });
             });
 
     }
@@ -140,8 +101,11 @@ class DemoHome extends OOContext
 
         $menu = array_merge($menu, [
             'sfi.demo.introduce',
-            Cases\CaseListInt::class,
             Guide\GuideScript::class,
+            Cases\NLUScript::class,
+            Cases\ConversationScript::class,
+            Cases\ShellScript::class,
+            Cases\ManagerScript::class,
             '结束会话' => QuitInt::class,
         ]);
 
@@ -155,33 +119,22 @@ class DemoHome extends OOContext
                 ->hearing(function(Hearing $hearing){
                     // 放开意图响应.
                     $hearing
-                        ->isIntentIn([
-                            "Commune.Studio.Contexts.Demo",
-                        ])
                         ->isAnyIntent()
-                        ->fallback(new SimpleChatAction('demo'));
+                        ->interceptor(new SimpleChatAction())
+                        ->end(function(Dialog $dialog){
+
+                            $dialog->say()
+                                ->info(<<<EOF
+不好意思, 没有理解您的话. 给出数字序号能选择相应功能.
+
+项目目前还在测试阶段, 重点在多轮对话上. 自然语言识别和闲聊的部分实现有限, 尚请谅解.
+EOF
+                                );
+
+                            return $dialog->repeat();
+                        });
                 })
             );
-
-    }
-
-    /**
-     * 确认要不要使用新人指引.
-     *
-     * 测试 action, isPositive
-     *
-     * @param Stage $stage
-     * @return Navigator
-     */
-    public function __onConfirmGuide(Stage $stage) : Navigator
-    {
-        return $stage->buildTalk()
-            ->info('demo.introduce')
-            ->askConfirm('请问您要查看"demo 使用指引"吗?')
-            ->wait()
-                ->hearing()
-                    ->isPositive(new ToNext('guide'))
-                    ->end(new ToNext('menu'));
 
     }
 

@@ -6,16 +6,19 @@
 - 新人必读
 
 ## intent:Commune.Demo.App.Cases.Wheather.TellWeatherInt 
-- [今天](date)天气怎么样?
 - 我想知道[明天](date)的天气如何
 - [北京](city)[后天](date)什么天气啊
 - 气温如何?
-- [上海](city)[大后天](date)下雨吗?
+- [上海](city)[大后天](date)下雨吗
 - 您知道[广州]的天气吗
 - 请问[明天](date)下雨吗
 - [后天](date)多少度啊?
 - [明天](date)是晴天吗?
 - [长沙](date)下雨了吗?
+- [今天](date)天气怎么样
+- [后天](date)多少度啊
+- [明天](date)是晴天吗
+- [长沙](date)下雨了吗
 
 ## intent:rasa.manager 
 - 测试意图命中
@@ -118,12 +121,16 @@
 - 早上好
 - 中午好
 - 晚上好
+- 你好啊
 
 ## intent:attitudes.thanks 
 - thanks
 - thank you
 - 谢谢您
 - 感谢您
+- 谢谢你
+- 感谢你
+- 谢谢啦
 
 ## intent:sfi.demo.intro.whatIsConversation 
 - conversation.singleOrMulti
@@ -141,6 +148,12 @@
 - 真差劲
 - 简直是人工智障
 - 真的一点也不行
+- 你傻吗
+- 你好蠢啊
+- 这都不知道吗
+- 做得太烂了
+- 真是笨啊
+- 我觉得你不行
 
 ## intent:attitudes.good 
 - ok
@@ -164,3 +177,72 @@
 - 太棒了
 - 太赞了
 - 真牛逼
+
+## intent:attitudes.laugh 
+- 哈哈
+- 哈哈哈哈
+- 笑死我了
+- 真好笑
+- 太搞笑了
+
+## intent:introduce.whoareyou 
+- 你是谁
+- 你是什么
+- 你是啥玩意
+- 这是什么东西
+- 我在哪里
+
+## intent:introduce.contact 
+- 如何联系你
+- 怎么联系作者
+- 有联系方式吗
+- 有没有email
+- 怎么和作者说话
+- 邮箱是什么
+- 怎么联系
+
+## intent:mood.happy 
+- 今天天气真好
+- 真开心啊
+- 我挺高兴
+- 很快乐
+
+## intent:mood.sad 
+- 我好难过
+- 想哭
+- 太难受了
+- 好不舒服
+- 真痛苦
+- 头疼
+
+## intent:ask.talk 
+- 说话
+- 你说点啥
+- 想什么呢
+- 说点什么
+- 你在干什么
+
+## intent:ask.joke 
+- 说个笑话吧
+- 会说笑话吗
+- 逗我开心
+- 会开玩笑吗
+- 有什么好笑的
+- 讲笑话
+- 来个笑话听听
+
+## intent:rapofchina.champion 
+- 新说唱你觉得谁是冠军
+- 新说唱谁能夺冠
+- 谁是新说唱第一名
+- 你最看好新说唱哪个
+- 新说唱你看谁
+- 你心中新说唱的冠军是谁
+- 哪个得新说唱第一
+
+## intent:rapofchina.whichgood 
+- 你最喜欢新说唱哪个作品
+- 新说唱哪首歌最好听
+- 新说唱最好的歌是哪个
+- 新说唱有哪些好作品
+- 新说唱哪些歌值得听一听

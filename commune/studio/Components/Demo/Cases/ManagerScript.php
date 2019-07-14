@@ -16,7 +16,6 @@ use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Studio\Components\Demo\Memories\UserStatus;
 use Commune\Studio\Components\Demo\Supports\ScriptTrait;
 
 class ManagerScript extends ScriptDef
@@ -28,15 +27,7 @@ class ManagerScript extends ScriptDef
 
     public function __onStart(Stage $stage): Navigator
     {
-        $status = UserStatus::from($this);
-        $tested = $status->testManager;
-        $status->testManager = true;
-
-        if (true === $tested) {
-            return $stage->dialog->goStage('final');
-        }
-
-        return parent::__onStart($stage);
+        return $stage->dialog->goStage('final');
     }
 
     public function __onFinal(Stage $stage): Navigator
@@ -48,7 +39,9 @@ class ManagerScript extends ScriptDef
             ->onFallback($this->callContinueTo('final'))
             ->component(new Menu(
                 <<<EOF
-您可能需要:'
+这里是本项目实现的, 用多轮对话管理多轮对话系统的一些工具.
+
+您可能需要:
 EOF
                 ,
                 [
@@ -56,9 +49,18 @@ EOF
                     NLUExamplesTask::class,
                     SimpleChatTask::class,
                     '查看介绍' => 'startConversation',
+                    '查看源码' => 'source',
                     '返回' => [Redirector::class, 'fulfill'],
                 ]
             ));
+    }
+
+
+    public function __onSource(Stage $stage) : Navigator
+    {
+        return $stage->buildTalk()
+            ->info('源码在: https://github.com/thirdgerb/chatbot-studio/blob/develop/commune/studio/Components/Demo/Cases/ManagerScript.php')
+            ->goStage('final');
     }
 
     public function __hearing(Hearing $hearing): void
@@ -70,14 +72,9 @@ EOF
     {
         return [
             <<<EOF
-测试之前先会有一段介绍. 输入 'b' 跳过.
-EOF
-            ,
-
-            <<<EOF
 多轮对话交互引擎有一个我觉得很优秀的地方: 可以在自己生成的对话中管理自己. 
 
-这个 demo 就用组件化的方式集成了多个自我管理工具.
+本 demo 就用组件化的方式集成了多个自我管理工具.
 
 这些工具理论上只有超级管理员可以使用, 我这里开放了一部分权限供您测试
 EOF
