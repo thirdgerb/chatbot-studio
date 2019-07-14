@@ -53,6 +53,9 @@ class DemoHome extends OOContext
      */
     public function __onStart(Stage $stage) : Navigator
     {
+        $loginTimes = $this->loginTimes;
+        $loginTimes += 1;
+        $this->loginTimes = $loginTimes;
         return $stage
             ->onFallback([Redirector::class, 'repeat'])
             ->talk(function(Dialog $dialog){
@@ -66,13 +69,11 @@ class DemoHome extends OOContext
 
             }, function(Dialog $dialog, Message $message){
 
-                return $dialog->hear($message)
-                    ->isAnyIntent()
-                    ->interceptor(new SimpleChatAction())
-                    ->always(function(Dialog $dialog){
+                return $dialog
+                    ->hear($message)
+                    ->end(function(Dialog $dialog) {
                         return $dialog->repeat();
-                    })
-                    ->end();
+                    });
             });
 
     }
