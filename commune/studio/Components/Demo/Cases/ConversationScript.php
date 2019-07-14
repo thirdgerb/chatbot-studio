@@ -58,7 +58,7 @@ EOF
             [
                 '问卷调查模拟:15秒读懂您的性格' => ReadPersonality::class,
                 '查看介绍' => 'startConversation',
-                '查看源码' => 'source',
+                '查看源码' => [$this, 'source'],
                 '返回' => [Redirector::class, 'fulfill'],
             ]
         ));
