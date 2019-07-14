@@ -17,7 +17,6 @@ use Commune\Chatbot\OOHost\Context\OOContext;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Studio\Components\Demo\Introduce\IntroduceInt;
 use Commune\Studio\Components\Demo\Memories\UserStatus;
 
 /**
@@ -53,8 +52,10 @@ class DemoHome extends OOContext
      */
     public function __onStart(Stage $stage) : Navigator
     {
-        $loginTimes = $this->loginTimes;
+        $status = UserStatus::from($this);
+        $loginTimes = $status->loginTimes;
         $loginTimes += 1;
+        $status->loginTimes = $loginTimes;
         $this->loginTimes = $loginTimes;
         return $stage
             ->onFallback([Redirector::class, 'repeat'])
