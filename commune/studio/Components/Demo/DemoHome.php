@@ -69,9 +69,10 @@ class DemoHome extends OOContext
                 return $dialog->hear($message)
                     ->isAnyIntent()
                     ->interceptor(new SimpleChatAction())
-                    ->end(function(Dialog $dialog){
+                    ->always(function(Dialog $dialog){
                         return $dialog->repeat();
-                    });
+                    })
+                    ->end();
             });
 
     }
