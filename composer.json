@@ -9,8 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
-        "commune/chatbot-laravel": "dev-develop",
-        "commune/chatbot-wechat": "dev-develop",
+        "commune/chatbot-wechat": "dev-master",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",

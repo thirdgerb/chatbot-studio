@@ -184,6 +184,11 @@ return [
         // 这里的intent会对每一个请求进行强制的意图识别
         // 命中的话优先执行.
         'navigatorIntents' => [
+            App\Components\Predefined\Navigation\QuitInt::class,
+            App\Components\Predefined\Navigation\BackwardInt::class,
+            App\Components\Predefined\Navigation\CancelInt::class,
+            App\Components\Predefined\Navigation\RepeatInt::class,
+            App\Components\Predefined\Navigation\RestartInt::class,
         ],
         // session 预定义的记忆.
         'memories' => [
