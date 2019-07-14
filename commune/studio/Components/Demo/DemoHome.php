@@ -5,13 +5,10 @@ namespace Commune\Studio\Components\Demo;
 
 
 use Commune\Chatbot\App\Callables\Actions\Redirector;
-use Commune\Chatbot\App\Callables\Actions\ToNext;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\App\Components\Predefined\Navigation\QuitInt;
-use Commune\Chatbot\App\Components\SimpleChat\Callables\ContinueOrChat;
 use Commune\Chatbot\App\Components\SimpleChat\Callables\SimpleChatAction;
 use Commune\Chatbot\App\Traits\AskContinueTrait;
-use Commune\Chatbot\Blueprint\Conversation\User;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
@@ -20,7 +17,6 @@ use Commune\Chatbot\OOHost\Context\OOContext;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
-use Commune\Studio\Callables\Interceptors\FirstMeet;
 use Commune\Studio\Components\Demo\Introduce\IntroduceInt;
 use Commune\Studio\Components\Demo\Memories\UserStatus;
 
@@ -100,7 +96,7 @@ class DemoHome extends OOContext
         }
 
         $menu = array_merge($menu, [
-            'sfi.demo.introduce',
+            '查看 commune/chatbot 项目介绍' => 'toIntro',
             Guide\GuideScript::class,
             Cases\NLUScript::class,
             Cases\ConversationScript::class,
@@ -138,6 +134,26 @@ EOF
 
     }
 
+    public function __onToIntro(Stage $stage) : Navigator
+    {
+        return $stage->buildTalk()
+            ->info(
+                <<<EOF
+从现在开始进入 commune/chatbot 的自我介绍单元.
+
+这即是介绍, 也是测试. 测试用 markdown 文件自动生成"猜你想问"式, 结构化的知识库.
+
+配合自然语言识别, 可用于各种对话知识库应用. 源码在:
+
+https://github.com/thirdgerb/chatbot-studio/tree/master/commune/data/sfi/demo
+
+EOF
+
+            )
+            ->action($this->callContinueTo('introduce'));
+
+    }
+
     /**
      * 回调stage
      *
@@ -147,7 +163,7 @@ EOF
     public function __onIntroduce(Stage $stage) : Navigator
     {
         return $stage->sleepTo(
-            IntroduceInt::class,
+            'sfi.demo.introduce',
             function(Dialog $dialog) {
                 $dialog->say()->info('项目介绍结束');
                 return $dialog->goStage('menu');

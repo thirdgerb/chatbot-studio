@@ -9,4 +9,5 @@ suggestions:
 examples:
 ---
 
-稍后补充.
+commune/chatbot 项目基于 php 进行开发, 使用的主要组件列举如下.
+

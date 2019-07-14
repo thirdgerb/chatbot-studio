@@ -1,14 +1,23 @@
-description: 什么是"多轮对话交互引擎"
-suggestions:
+description: 什么是"多轮对话"
 examples:
-    - conversation.singleOrMulti
-    - conversation.whyEngineer
+suggestions:
+    - introduce
     - conversation.difficulties
+    - conversation.whyEngineer
     - conversation.future
 ---
 
-稍后补充.
+多轮对话, 指对话机器人完成一个用户发布的任务, 需要和用户进行反复的对话. 对话的内容大致包括:
 
-- 交互
-- 多轮
-- 引擎
+- 任务发布 (用户方)
+- 信息补全 (用户方)
+- 任务调度 (用户方)
+- 信息索取 (机器人)
+- 信息反馈 (机器人)
+
+常见的闲聊机器人, 或是"siri"或智能音箱, 都是"单轮对话"机器人. 而 "简单多轮对话" 机器人, 通常只有 前两个环节的交互.
+
+用户发布完任务, 按机器人的要求补完信息, 就直接执行任务了. 而未来的多轮对话系统, 势必要发展得像 浏览器, 桌面系统一样成熟, 可以进行反复的交互, 还能随时切换任务.
+
+commune/chatbot 就是尝试解决这些问题, 提出的一种解决方案.
+

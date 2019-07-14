@@ -90,11 +90,6 @@ return [
                     'id' => 'demo',
                     'resource' => base_path('commune/data/chats/demo.yml')
                 ],
-                [
-                    'id' => 'example',
-                    'resource' => base_path('commune/data/chats/example.yml')
-                ],
-
             ],
         ],
         // 管理消息意图识别记录的组件.

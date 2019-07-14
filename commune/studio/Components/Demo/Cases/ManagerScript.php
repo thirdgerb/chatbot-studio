@@ -22,7 +22,7 @@ class ManagerScript extends ScriptDef
 {
     use ScriptTrait, AskContinueTrait;
 
-    const DESCRIPTION = '多轮对话管理工具';
+    const DESCRIPTION = '多轮对话管理工具测试';
 
 
     public function __onStart(Stage $stage): Navigator

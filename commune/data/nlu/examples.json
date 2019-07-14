@@ -5,28 +5,8 @@
         "新手教程",
         "新人必读"
     ],
-    "Commune.Demo.App.Cases.Wheather.TellWeatherInt": [
-        "我想知道[明天](date)的天气如何",
-        "[北京](city)[后天](date)什么天气啊",
-        "气温如何?",
-        "[上海](city)[大后天](date)下雨吗",
-        "您知道[广州]的天气吗",
-        "请问[明天](date)下雨吗",
-        "[后天](date)多少度啊?",
-        "[明天](date)是晴天吗?",
-        "[长沙](date)下雨了吗?",
-        "[今天](date)天气怎么样",
-        "[上海](city)[大后天](date)下雨吗",
-        "[后天](date)多少度啊",
-        "[明天](date)是晴天吗",
-        "[长沙](date)下雨了吗"
-    ],
-    "rasa.manager": [
-        "测试意图命中",
-        "测试命中的意图",
-        "测试命中了什么意图",
-        "测试 matched intent",
-        "查看命中的意图"
+    "sfi.demo.example": [
+        "simple file chat 如何做配置?"
     ],
     "navigation.back": [
         "回到上一步",
@@ -72,21 +52,6 @@
         "您要干什么来着",
         "您刚才要我干嘛"
     ],
-    "attitudes.ok": [
-        "ok",
-        "okay",
-        "good",
-        "very good",
-        "excellent",
-        "好啊",
-        "太好了",
-        "非常好",
-        "不错",
-        "真棒",
-        "挺好的呀",
-        "就这样吧",
-        "这样就行"
-    ],
     "attitudes.deny": [
         "no",
         "nope",
@@ -98,6 +63,17 @@
         "不对",
         "错了",
         "并非如此"
+    ],
+    "attitudes.awesome": [
+        "awesome",
+        "wonderful",
+        "excellent",
+        "very good",
+        "牛逼",
+        "真厉害",
+        "好厉害",
+        "太棒了",
+        "太赞了"
     ],
     "attitudes.affirm": [
         "yes",
@@ -118,66 +94,26 @@
         "good afternoon",
         "good night",
         "您好",
+        "你好啊",
         "嗨",
         "早上好",
         "中午好",
-        "晚上好",
-        "你好啊"
+        "晚上好"
     ],
     "attitudes.thanks": [
         "thanks",
         "thank you",
-        "谢谢您",
-        "感谢您",
         "谢谢你",
         "感谢你",
         "谢谢啦"
     ],
-    "sfi.demo.intro.whatIsConversation": [
-        "conversation.singleOrMulti",
-        "conversation.whyEngineer",
-        "conversation.difficulties",
-        "conversation.future"
-    ],
-    "sfi.demo.example": [
-        "simple file chat 如何做配置?"
-    ],
     "attitudes.diss": [
-        "做得真烂",
-        "实在做得太差了",
-        "一点都不好用",
-        "真差劲",
-        "简直是人工智障",
-        "真的一点也不行",
         "你傻吗",
         "你好蠢啊",
         "这都不知道吗",
         "做得太烂了",
         "真是笨啊",
         "我觉得你不行"
-    ],
-    "attitudes.good": [
-        "ok",
-        "okay",
-        "good",
-        "好啊",
-        "不错",
-        "也行",
-        "挺好的",
-        "这样就行",
-        "就这样吧"
-    ],
-    "attitudes.awesome": [
-        "awesome",
-        "wonderful",
-        "excellent",
-        "very good",
-        "牛逼",
-        "真厉害",
-        "好厉害",
-        "太棒了",
-        "太赞了",
-        "真牛逼"
     ],
     "attitudes.laugh": [
         "哈哈",
@@ -247,5 +183,18 @@
         "新说唱最好的歌是哪个",
         "新说唱有哪些好作品",
         "新说唱哪些歌值得听一听"
+    ],
+    "Commune.Demo.App.Cases.Wheather.TellWeatherInt": [
+        "[今天](date)天气怎么样",
+        "我想知道[明天](date)的天气如何",
+        "[北京](city)[后天](date)什么天气啊",
+        "气温如何",
+        "[暴风城](city)[明天](date)是晴天吗",
+        "[上海](city)[大后天](date)下雨吗",
+        "您知道[广州]的天气吗",
+        "请问[明天](date)下雨吗",
+        "[后天](date)多少度啊",
+        "[明天](date)是晴天吗",
+        "[长沙](date)下雨了吗"
     ]
 }

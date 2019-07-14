@@ -5,12 +5,10 @@ namespace Commune\Studio\Components\Demo\Cases;
 
 
 use Commune\Chatbot\App\Callables\Actions\Redirector;
-use Commune\Chatbot\App\Callables\Actions\ToNext;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\App\Contexts\ScriptDef;
 use Commune\Chatbot\App\Traits\AskContinueTrait;
 use Commune\Chatbot\OOHost\Context\Depending;
-use Commune\Chatbot\OOHost\Context\Hearing;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
@@ -52,7 +50,6 @@ class ConversationScript extends ScriptDef
             ->component(new Menu(
             <<<EOF
 由于本 demo 所有的对话都是多轮对话本身, 所以仅准备了一个例子.
-
 演示如何用多轮对话实现复杂的问卷调查 (非线性, 有计算逻辑, 有历史记忆, 可以重置, 生产级应用场景). 
             
 您可能需要:
@@ -67,11 +64,10 @@ EOF
         ));
     }
 
-    public function __onSource(Stage $stage) : Navigator
+    public function source(Dialog $dialog) : Navigator
     {
-        return $stage->buildTalk()
-            ->info('源码在: https://github.com/thirdgerb/chatbot-studio/blob/develop/commune/studio/Components/Demo/Cases/ConversationScript.php')
-            ->goStage('final');
+        $dialog->say()->info('源码在: https://github.com/thirdgerb/chatbot-studio/blob/develop/commune/studio/Components/Demo/Cases/ConversationScript.php');
+        return $dialog->repeat();
     }
 
     public static function getScripts(): array

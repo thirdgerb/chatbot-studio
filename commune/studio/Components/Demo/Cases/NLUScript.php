@@ -8,7 +8,6 @@ use Commune\Chatbot\App\Callables\Actions\Redirector;
 use Commune\Chatbot\App\Callables\Actions\ToNext;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\App\Components\Rasa\Contexts\RasaManagerInt;
-use Commune\Chatbot\App\Components\SimpleChat\Callables\SimpleChatAction;
 use Commune\Chatbot\App\Components\SimpleChat\Tasks\SimpleChatTask;
 use Commune\Chatbot\App\Contexts\ScriptDef;
 use Commune\Chatbot\App\Traits\AskContinueTrait;
@@ -19,6 +18,7 @@ use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Demo\App\Cases\Wheather\TellWeatherInt;
 use Commune\Studio\Components\Demo\Supports\ScriptTrait;
+use Illuminate\Support\Collection;
 
 class NLUScript extends ScriptDef
 {
@@ -79,10 +79,10 @@ class NLUScript extends ScriptDef
         if ($t === 1) {
             $builder->info(
                 <<<EOF
-本 demo 的重点在于多轮对话, 也简单做了自然语言的闲聊功能.
+本 demo 的重点在于多轮对话, 也使用开源项目 rasa 简单做了自然语言的闲聊功能.
 
-配置, 训练, 打磨闲聊机器人的时间成本很高, 引入语料库也价值不大, 而且闲聊并非本项目重点, 目前仅做了简单的闲聊.
-
+配置, 训练, 打磨闲聊机器人的时间成本很高, 而且闲聊并非本项目重点, 目前仅做了简单的闲聊.
+未来NLU部分应该是调用AI云的api
 
 EOF
 
@@ -96,10 +96,10 @@ EOF
 
 可在此 https://github.com/thirdgerb/chatbot-studio/blob/master/commune/data/chats/demo.yml 看到所有已配置的闲聊内容.
 
-您可以尝试以下对白:
+由于语料非常少, 目前自然语言识别效果很差. 您可以尝试以下对白:
+
 - 你好
 - 讲笑话
-- 你是谁
 - 如何联系你
 - 新说唱谁能夺冠
 EOF
@@ -107,7 +107,10 @@ EOF
             ->wait()
             ->hearing()
             ->is('b', new ToNext('final'))
-            ->interceptor(new SimpleChatAction())
+            ->hasKeywords([['笑话', '说笑', '逗', '搞笑']], $this->insertIntent('ask.joke'))
+            ->hasKeywords([ ['联系', 'email']], $this->insertIntent('introduce.contact'))
+            ->hasKeywords(['说唱', ['夺冠', '冠军', '第一', '牛']], $this->insertIntent('rapofchina.champion'))
+            ->defaultFallback()
             ->end(function(Dialog $dialog){
 
                 $intent = $dialog->session->incomingMessage->getMostPossibleIntent();
@@ -116,11 +119,39 @@ EOF
 
                 $dialog
                     ->say()
-                    ->info($msg. ' 没有命中任何闲聊. 请继续输入句子测试. 输入"b"退出测试');
+                    ->info($msg. '没有命中任何闲聊 (由于时间精力和语料都缺, 现在还是人工智障). 
+请继续输入句子测试. 输入"b"退出测试');
 
                 return $dialog->wait();
             });
 
+    }
+
+    protected function insertIntent(string $intent) : \Closure
+    {
+        $intent = trim($intent);
+        return function(Dialog $dialog) use ($intent) {
+            $incoming = $dialog->session->incomingMessage;
+
+            $possible = $incoming->getMostPossibleIntent();
+            if (isset($possible) && $possible == $intent) {
+                return null;
+            }
+
+            $dialog->say()->info("(没命中意图, 命中了本地关键字...)");
+
+            $incoming->addPossibleIntent(
+                $intent,
+                new Collection([]),
+                100
+            );
+
+            $names = $incoming->getHighlyPossibleIntentNames();
+            $names[] = $intent;
+            $incoming->setHighlyPossibleIntentNames($names);
+
+            return null;
+        };
     }
 
     public function __onToWeather(Stage $stage) : Navigator
@@ -222,9 +253,11 @@ EOF
             ,
 
             <<<EOF
-我目前使用的 NLU, 是基于rasa做的. rasa是一个开源项目, 我目前理解是对tensorflow, mitie 等软件做了工程上的封装, 使得我这样的小白也能使用.
+我目前使用的 NLU, 是基于rasa做的. rasa是一个开源项目, 我目前理解是对tensorflow, mitie 等软件做了工程上的封装, 使得我这样的外行也能使用.
 
 rasa nlu 可以将一段话匹配意图 (目前还不适合多段话多个意图), 并提取出参数 (entity). 而 commune/chatbot 会捕获提取该结果, 抽象化成 intent 对象 (类似命令行) , 应用到后续多轮对话逻辑中.
+
+由于nlu不是本项目的重点, 加之语料匮乏, 训练成本高, 所以暂时只是做了个示例.
 EOF
             ,
             <<<EOF
