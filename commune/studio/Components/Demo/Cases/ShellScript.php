@@ -55,8 +55,8 @@ EOF
             ->wait()
             ->hearing()
             ->isChoice(0, new ToNext('startConversation'))
-            ->isChoice(1, [Redirector::class, 'fulfill'])
-            ->isChoice(2, new ToNext('source'))
+            ->isChoice(1, new ToNext('source'))
+            ->isChoice(2, [Redirector::class, 'fulfill'])
             ->end(function(Dialog $dialog){
                 $dialog
                     ->say()
