@@ -17,7 +17,7 @@ return [
 
     'dialog' => [
         'farewell' => '再见, 欢迎下次再来!',
-        'missMatched' => '不好意思...没明白啥意思...',
+        'missMatched' => '不好意思...没明白啥意思...自然语言识别做得很有限, 还请按照照提示',
         'continue' => '输入 "." 继续',
         'script' => [
             'continue' => '输入 "." 继续, 输入".." 跳到最后'

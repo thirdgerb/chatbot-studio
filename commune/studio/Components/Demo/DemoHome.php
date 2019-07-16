@@ -5,8 +5,10 @@ namespace Commune\Studio\Components\Demo;
 
 
 use Commune\Chatbot\App\Callables\Actions\Redirector;
+use Commune\Chatbot\App\Callables\Actions\ToNext;
 use Commune\Chatbot\App\Callables\StageComponents\Menu;
 use Commune\Chatbot\App\Components\Predefined\Navigation\QuitInt;
+use Commune\Chatbot\App\Components\Rasa\Contexts\RasaManagerInt;
 use Commune\Chatbot\App\Components\SimpleChat\Callables\SimpleChatAction;
 use Commune\Chatbot\App\Traits\AskContinueTrait;
 use Commune\Chatbot\Blueprint\Message\Message;
@@ -17,6 +19,11 @@ use Commune\Chatbot\OOHost\Context\OOContext;
 use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
+use Commune\Demo\App\Cases\Questionnaire\ReadPersonality;
+use Commune\Demo\App\Cases\Wheather\TellWeatherInt;
+use Commune\Studio\Components\Demo\Cases\CaseListInt;
+use Commune\Studio\Components\Demo\Drink\DrinkTask;
+use Commune\Studio\Components\Demo\Guest\GuessNumTask;
 use Commune\Studio\Components\Demo\Memories\UserStatus;
 
 /**
@@ -92,23 +99,31 @@ class DemoHome extends OOContext
 
         if (!$this->toldWhatToDo) {
             $menu = [
-                '你能做些什么?' => 'help',
+                '这个 demo 能做些什么?' => 'help',
             ];
         } else {
             $menu = [];
         }
 
         $menu = array_merge($menu, [
-            '查看 commune/chatbot 项目介绍' => 'toIntro',
+            '测试用例: 询问天气' => 'weather',
+            '测试用例: 多轮对话购买饮料' => DrinkTask::class,
+            '测试用例: 15秒知道您的性格' => ReadPersonality::class,
+            '测试用例: 二分法猜数字小游戏' => GuessNumTask::class,
+            '测试命令: 输入 #help 查看命令' => function(Dialog $dialog){
+                $dialog->say()->info("输入 #help 查看命令, 输入 #repeat 继续");
+                return $dialog->wait();
+            },
+            '测试管理工具: 查看 rasa nlu 意图识别' => RasaManagerInt::class,
             Guide\GuideScript::class,
-            Cases\NLUScript::class,
-            Cases\ConversationScript::class,
-            Cases\ShellScript::class,
-            Cases\ManagerScript::class,
+            CaseListInt::class,
+            'commune/chatbot 项目介绍' => 'toIntro',
             '结束会话' => QuitInt::class,
         ]);
 
-        return $stage->buildTalk()
+        return $stage
+            ->onFallback($this->callContinueTo('menu'))
+            ->buildTalk()
             ->toStage()
             ->component(
                 (new Menu(
@@ -135,6 +150,35 @@ EOF
                 })
             );
 
+    }
+
+    public function __onWeather(Stage $stage) : Navigator
+    {
+        return $stage
+            ->onFallback(function(Dialog $dialog){
+                $dialog->say()->info('测试结束');
+                return $dialog->goStage('menu');
+            })
+            ->buildTalk()
+            ->info(<<<EOF
+本项目以 rasa 作为 NLU, 制作了简单的天气查询用例.
+
+您可以试着询问:
+- 明天天气如何?
+- 北京的气温多少度
+- 上海后天天气如何
+
+看看进入多轮对话效果. 输入"b" 退出测试.
+EOF
+)
+            ->wait()
+            ->hearing()
+            ->is('b', new ToNext('menu'))
+            ->isIntent(TellWeatherInt::class)
+            ->end(function(Dialog $dialog){
+                $dialog->say()->info("没有命中天气测试. 可以输入文字继续. 输入'b'退出测试");
+                return $dialog->wait();
+            });
     }
 
     public function __onToIntro(Stage $stage) : Navigator

@@ -54,13 +54,14 @@ EOF
             )
             ->wait()
             ->hearing()
+            ->is('b', [Redirector::class, 'fulfill'])
             ->isChoice(0, new ToNext('startConversation'))
             ->isChoice(1, new ToNext('source'))
             ->isChoice(2, [Redirector::class, 'fulfill'])
             ->end(function(Dialog $dialog){
                 $dialog
                     ->say()
-                    ->warning('我关闭了其它响应, 目前只有命令可以使用. 请您尝试 #help,  或者输入 #cancel 退出当前测试.');
+                    ->warning('请您尝试 #help 查看可用命令.  输入 #cancel 或者"b" 退出当前测试.');
                 return $dialog->wait();
             });
     }

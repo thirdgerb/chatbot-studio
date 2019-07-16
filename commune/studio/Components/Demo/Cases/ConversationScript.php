@@ -13,6 +13,7 @@ use Commune\Chatbot\OOHost\Context\Stage;
 use Commune\Chatbot\OOHost\Dialogue\Dialog;
 use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Demo\App\Cases\Questionnaire\ReadPersonality;
+use Commune\Studio\Components\Demo\Guest\GuessNumTask;
 use Commune\Studio\Components\Demo\Memories\UserStatus;
 use Commune\Studio\Components\Demo\Supports\ScriptTrait;
 
@@ -49,14 +50,16 @@ class ConversationScript extends ScriptDef
             ->onFallback($this->callContinueTo('final'))
             ->component(new Menu(
             <<<EOF
-由于本 demo 所有的对话都是多轮对话本身, 所以仅准备了一个例子.
-演示如何用多轮对话实现复杂的问卷调查 (非线性, 有计算逻辑, 有历史记忆, 可以重置, 生产级应用场景). 
-            
+由于本 demo 所有的对话都是多轮对话的测试.
+
+重点在于上下文的跳转, 切换, 退出, 记忆, 等环节. 
+
 您可能需要:
 EOF
             ,
             [
-                '问卷调查模拟:15秒读懂您的性格' => ReadPersonality::class,
+                '模拟问卷调查:15秒读懂您的性格' => ReadPersonality::class,
+                '二分法猜数字小游戏' => GuessNumTask::class,
                 '查看介绍' => 'startConversation',
                 '查看源码' => [$this, 'source'],
                 '返回' => [Redirector::class, 'fulfill'],

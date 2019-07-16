@@ -14,7 +14,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 
 class CaseListInt extends ContextIntent
 {
-    const DESCRIPTION = 'demo 测试用例';
+    const DESCRIPTION = 'demo 测试用例列表';
 
     const EXAMPLES = [
 

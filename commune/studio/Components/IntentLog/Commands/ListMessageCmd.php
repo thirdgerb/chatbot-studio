@@ -46,8 +46,7 @@ class ListMessageCmd extends SessionCommand
         $chatId = $message['--c'];
         $sessionId = $message['--s'];
         $matchedIntent = $message['--m'];
-
-        $unheard = boolval( $message['--unheard'] );
+        $unheard = isset($message['--unheard']) ? !boolval($message['--unheard']) : null;
 
         $data = $this->repo->listMessages(
             $offset,

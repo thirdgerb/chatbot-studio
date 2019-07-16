@@ -1,10 +1,14 @@
 description: 什么是"多轮对话"
-examples:
 suggestions:
     - introduce
     - conversation.difficulties
     - conversation.whyEngineer
     - conversation.future
+examples:
+    - 什么是多轮对话
+    - 多轮对话是什么
+    - 如何理解多轮对话
+    - 啥叫多轮对话
 ---
 
 多轮对话, 指对话机器人完成一个用户发布的任务, 需要和用户进行反复的对话. 对话的内容大致包括:

@@ -55,31 +55,15 @@ return [
                     'resourcePath' => base_path('commune/data/sfi/demo'),
                     'intentAlias' => [],
                     'defaultSuggestions' => [
-                        '返回' => [ Redirector::class, 'backward'],
-                        '结束' => [ Redirector::class, 'fulfill'],
+                        '回到上一步' => [ Redirector::class, 'backward'],
+                        '结束浏览' => [ Redirector::class, 'fulfill'],
                     ],
                     'question' => '您可能需要:'
                 ],
             ]
         ],
         // rasa 组件配置. 了解详情请查看 rasa.com
-        App\Components\RasaComponent::class => [
-            'server' => env('RASA_SERVER', 'localhost:5005'),
-            'jwt' => env('RASA_JWT', ''),
-            'pipe' => App\Components\Rasa\RasaNLUPipeImpl::class,
-            // 计算意图命中的阈值. 低于阈值的不列入可能意图.
-            'threshold' => 70,
-            'output' => base_path('commune/rasa/data/nlu.md'),
-            'synonym' => [
-                //SynonymOption::stub(),
-            ],
-            'lookup' => [
-                //LookupOption::stub(),
-            ],
-            'regex' => [
-                //RegexOption::stub(),
-            ]
-        ],
+        App\Components\RasaComponent::class => include(base_path('commune/data/configs/rasa.php')),
         // 系统自带的 context 的loader. 可选. 主要提供常见的打招呼之类的意图.
         App\Components\PredefinedIntComponent::class,
         // 简单闲聊的组件. 可以在这里编辑闲聊.
@@ -95,12 +79,18 @@ return [
         // 管理消息意图识别记录的组件.
         Studio\Components\IntentLogComponent::class,
     ],
+
     // 预定义的系统服务, 在这里可更改 service provider
     'baseServices' => \Commune\Chatbot\Config\Services\BaseServiceConfig::stub(),
+
     // 在reactor中注册的服务, 多个请求共享
     'reactorProviders' => [
+        // 基础的类加载
         Studio\Providers\StudioServiceProvider::class,
+        // 默认的情感单元, 可以把意图或者message 映射成情感
+        Studio\Providers\FeelingServiceProvider::class,
     ],
+
     // 在conversation开始时才注册服务, 其单例在每个请求之间是隔离的.
     'conversationProviders' => [
         // 数据读写的组件, 用到了laravel DB 的redis 和 mysql
@@ -156,6 +146,8 @@ return [
         'sessionCacheSeconds' => 60,
         // session 中经历的管道.
         'sessionPipes' => array_merge([
+                // 消息日志..
+                \Commune\Chatbot\Laravel\SessionPipes\MessagesLogPipe::class,
                 // 默认回复的消息.
                 App\SessionPipe\DefaultReplyPipe::class,
                 // 处理事件类消息的管道.
@@ -170,7 +162,6 @@ return [
                 App\SessionPipe\MarkedIntentPipe::class,
                 // 优先级最高, 用于导航的意图中间件.
                 App\SessionPipe\NavigationPipe::class,
-
             ],
             env('COMMUNE_NLU', '') === true
                 ?  [
