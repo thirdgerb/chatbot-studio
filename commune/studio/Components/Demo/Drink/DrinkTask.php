@@ -72,6 +72,7 @@ class DrinkTask extends TaskDef
     public function __hearing(Hearing $hearing) : void
     {
         $hearing
+            ->is('b', [Redirector::class, 'cancel'])
 
             // 是不是点单, 重新点单
             ->isIntent(
@@ -420,6 +421,10 @@ class DrinkTask extends TaskDef
             $this->shouldPay = $this->free === true ? 7.5 : 15;
         }
 
+        if ($this->shouldPay == 0) {
+            return $stage->dialog->goStagePipes(['ifPack', 'deliver']);
+        }
+
         return $stage->buildTalk()
             ->withSlots([
                 'order' => $this->order->toOrderStr(),
@@ -492,15 +497,18 @@ class DrinkTask extends TaskDef
         if (isset($this->ifPack)) {
             return $stage->dialog->goStage('deliver');
         }
+        $pack = function(Dialog $dialog){
+            $this->ifPack = true;
+            return $dialog->next();
+        };
+
 
         return $stage->buildTalk()
             ->info("需要打包走吗?")
             ->wait()
             ->hearing()
-            ->isPositive(function(Dialog $dialog){
-                $this->ifPack = true;
-                return $dialog->next();
-            })
+            ->isIntent(Intents\RandomInt::class, $pack)
+            ->isPositive($pack)
             ->isNegative(function(Dialog $dialog){
                 $this->ifPack = false;
                 return $dialog->next();
@@ -537,6 +545,11 @@ class DrinkTask extends TaskDef
 
     public function __exiting(Exiting $listener): void
     {
+        $listener->onCancel(function(Dialog $dialog){
+            $dialog->say()->info('再见, 期待您下次光临');
+
+            return $dialog->cancel(true);
+        });
     }
 
 
