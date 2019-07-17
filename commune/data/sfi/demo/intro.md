@@ -1,10 +1,10 @@
 description: commune/chatbot 项目介绍
 suggestions:
-    - intro.whatIsChatbot
-    - intro.whatIsConversation
+    - intro.chatbot
+    - intro.conversation
+    - intro.special
+    - intro.wheels
     - intro.howToUse
-    - intro.whatSpecial
-    - intro.whatWheels
     - intro.whyDevelop
 examples:
 ---
@@ -15,7 +15,10 @@ commune/chatbot 是一个基于php的多轮对话开发框架. 可用于开发�
 
 本项目可引入 NLU (自然语言单元) 实现对文本意图的解析, 从而具备自然语言对话的能力.
 
-本项目旨在让工程师开发出来的多轮对话应用, 像 web 网站, app 一样成熟. 可能的应用包括:
+本项目旨在让工程师开发多轮对话应用时, 像过去开发 web 网站, app 一样得心应手.
+
+
+可能的应用包括:
 
 - 客服机器人
 - 服务器运维

@@ -1,6 +1,6 @@
 description: 对话管理单元未来的发展趋势
 suggestions:
-    - introduce
+    - intro
     - ./
 examples:
 ---

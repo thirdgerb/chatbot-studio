@@ -55,10 +55,12 @@ return [
                     'resourcePath' => base_path('commune/data/sfi/demo'),
                     'intentAlias' => [],
                     'defaultSuggestions' => [
-                        '回到上一步' => [ Redirector::class, 'backward'],
+                        '回到上一层' => '..',
+                        '返回前一步' => [ Redirector::class, 'backward'],
                         '结束浏览' => [ Redirector::class, 'fulfill'],
                     ],
-                    'question' => '您可能需要:'
+                    'question' => '您可能需要:',
+                    'askContinue' => 'dialog.script.continue',
                 ],
             ]
         ],
@@ -180,6 +182,10 @@ return [
             App\Components\Predefined\Navigation\CancelInt::class,
             App\Components\Predefined\Navigation\RepeatInt::class,
             App\Components\Predefined\Navigation\RestartInt::class,
+            // 用到正则匹配, 防止短语部分 nlu 识别有问题
+            App\Components\Predefined\Attitudes\AffirmInt::class,
+            App\Components\Predefined\Attitudes\DenyInt::class,
+            App\Components\Predefined\Attitudes\DontInt::class,
         ],
         // session 预定义的记忆.
         'memories' => [

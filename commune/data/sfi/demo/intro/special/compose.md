@@ -1,7 +1,6 @@
-description: 高度组件化
+description: "特性: 高度组件化"
 suggestions:
-    - introduce
-    - /.
+    - ./
 examples:
 ---
 

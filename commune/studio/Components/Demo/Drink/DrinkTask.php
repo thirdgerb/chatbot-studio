@@ -26,6 +26,7 @@ use Illuminate\Support\Arr;
  * @property bool|null $ifPack
  * @property int $paid
  * @property int|null $shouldPay
+ * @property-read string $avail
  *
  *
  * 步骤设计:
@@ -74,57 +75,47 @@ class DrinkTask extends TaskDef
         $hearing
             ->is('b', [Redirector::class, 'cancel'])
 
-            // 是不是点单, 重新点单
-            ->isIntent(
-                Intents\WantDrinkInt::class,
-                function(Dialog $dialog, Intents\WantDrinkInt $order){
-                    if (isset($this->order)) {
-                        if (isset($order->fruit)) {
-                            $this->order->fruit = $order->fruit;
-                        }
-
-                        if (isset($order->cup)) {
-                            $this->order->cup = $order->cup;
-                        }
-
-                        if (isset($order->ice)) {
-                            $this->order->ice = $order->ice;
-                        }
-                    }
-
-                    return $dialog->goStage('fruit');
-                }
-            )
-
             ->isIntent(
                 Intents\OrderFruitInt::class,
-                function(Dialog $dialog, Intents\OrderFruitInt $intent){
+                function(Dialog $dialog, Intents\OrderFruitInt $intent) : Navigator{
+                    $fruit = $intent->fruit;
+                    $stage = $dialog->currentStage();
+                    $avail = $this->avail;
 
-                    if (isset($intent->fruit)) {
-                        $this->order->fruit = $intent->fruit;
+                    if (empty($fruit)) {
+                        $dialog->say()->info("我们这里有 $avail 这些口味的.");
+                        return $dialog->wait();
                     }
 
-                    return $dialog->goStage('confirmFruit');
+                    switch($stage) {
+                        //  提交.
+                        case 'sameAsLast':
+                        case 'fruit' :
+                            $this->order->fruit = $fruit;
+                            return $dialog->goStage('fruit');
+                        case 'ifIce' :
+                        case 'ifCup' :
+                        case 'pay' :
+
+                            if (!in_array($fruit, Intents\WantDrinkInt::FRUITS)) {
+                                $dialog->say()->info("sorry, 我们没有$fruit, 这里只有 $avail.");
+                                return $dialog->wait();
+                            }
+
+                            $this->order->fruit = $fruit;
+                            $dialog->say()->info("那把您的订单改成 $fruit");
+                            return $dialog->repeat();
+
+                        case 'ifPack' :
+                        default :
+                            $dialog->say()
+                                ->info("啊大兄弟这只是一个三四小时开发出来的demo啊, 要经历这么复杂的考验吗?不然算了吧...");
+                            return $dialog->goStage('deliver');
+
+                    }
                 }
             )
 
-            // 随便. 给用户随便一下.
-            ->isIntent(Intents\RandomInt::class, function(Dialog $dialog){
-                if (!isset($this->order)) {
-                    $this->order = new Intents\WantDrinkInt();
-                }
-
-                if (!isset($this->order->fruit)) {
-                    $this->order->fruit = Arr::random(Intents\WantDrinkInt::FRUITS);
-                }
-
-                $this->order->ice = true;
-                $this->order->cup = true;
-
-                $dialog->say()->info("那我就替您选了");
-
-                return $dialog->goStage('fruit');
-            })
 
             // 打招呼
             ->isIntent(Attitudes\GreetInt::class, function(Dialog $dialog){
@@ -135,13 +126,12 @@ class DrinkTask extends TaskDef
             })
 
             // 用户想走逑了. 这个也是negative, 所以应该在hearing end 之前.
-            ->isIntent(Attitudes\DontInt::class, [Redirector::class, 'cancel'])
+            ->pregMatch(
+                '/^(不要了|走了|再见|退出|结束|返回)$/',
+                [],
+                [Redirector::class, 'cancel']
+            )
 
-            // 订单错了
-            ->isIntent(Attitudes\WrongInt::class, function(Dialog $dialog){
-                return $dialog->goStage('recheck');
-
-            })
             // 被用户夸了, 免个单吧
             ->isIntent(Attitudes\AwesomeInt::class, function(Dialog $dialog){
 
@@ -165,49 +155,75 @@ class DrinkTask extends TaskDef
             // 用户谢谢了
             ->isIntent(Attitudes\ThanksInt::class, function(Dialog $dialog){
 
-                $dialog->say()->info('这是我应该做的 ~~');
+                $dialog->say()->info('应该谢谢你才对 ~~');
                 return $dialog->wait();
-            })
-
-            // 匹配
-            ->isInstanceOf(VerboseMsg::class, function(Dialog $dialog, VerboseMsg $msg){
-                $text = $msg->getTrimmedText();
-                [$fruit, $ifIce, $ifCup, $ifPack] = $this->fetchParams($text);
-
-                $changed = false;
-
-                if (!isset($this->order)) {
-                    $this->order = new Intents\WantDrinkInt();
-                }
-
-                if (isset($fruit) && $fruit !== $this->order->fruit) {
-                    $changed = true;
-                    $this->order->fruit = $fruit;
-                }
-
-                if (isset($ifIce) && $ifIce !== $this->order->ice) {
-                    $changed = true;
-                    $this->order->ice = $ifIce;
-                }
-
-                if (isset($ifCup) && $ifIce !== $this->order->cup) {
-                    $changed = true;
-                    $this->order->cup =  $ifCup;
-                }
-
-                if (isset($ifPack) && $ifPack !== $this->ifPack) {
-                    $changed = true;
-                    $this->ifPack = $ifPack;
-                }
-
-                if ($changed) {
-                    return $dialog->goStage('change');
-                }
-
-                return null;
-
             });
 
+    }
+
+    public function readOrder(Hearing $hearing) : void
+    {
+        // 匹配
+        $hearing->isInstanceOf(VerboseMsg::class, function(Dialog $dialog, VerboseMsg $msg){
+            $text = $msg->getTrimmedText();
+            [$fruit, $ifIce, $ifCup, $ifPack] = $this->fetchParams($text);
+
+            $changed = false;
+
+            if (!isset($this->order)) {
+                $this->order = new Intents\WantDrinkInt();
+            }
+
+            if (isset($fruit) && $fruit !== $this->order->fruit) {
+                $changed = true;
+                $this->order->fruit = $fruit;
+            }
+
+            if (isset($ifIce) && $ifIce !== $this->order->ice) {
+                $changed = true;
+                $this->order->ice = $ifIce;
+            }
+
+            if (isset($ifCup) && $ifIce !== $this->order->cup) {
+                $changed = true;
+                $this->order->cup =  $ifCup;
+            }
+
+            if (isset($ifPack) && $ifPack !== $this->ifPack) {
+                $changed = true;
+                $this->ifPack = $ifPack;
+            }
+
+            if ($changed) {
+                return $dialog->goStage('change');
+            }
+
+            return null;
+
+        });
+    }
+
+    public function doRandom(Dialog $dialog) : Navigator
+    {
+        if (!isset($this->order)) {
+            $this->order = new Intents\WantDrinkInt();
+        }
+
+        if (!isset($this->order->fruit)) {
+            $this->order->fruit = Arr::random(Intents\WantDrinkInt::FRUITS);
+        }
+
+        if (!isset($this->order->ice)) {
+            $this->order->ice = true;
+        }
+
+        if (!isset($this->order->cup)) {
+            $this->order->cup = true;
+        }
+
+        $dialog->say()->info("那我就替您选了");
+
+        return $dialog->goStage('fruit');
     }
 
     protected function fetchParams(string $text) : array
@@ -265,28 +281,29 @@ class DrinkTask extends TaskDef
             ->withSlots([
                 'times' => $mem->times
             ])
-            ->info("欢迎来到果汁店, %user.name%! 这是您第%times%次光临")
+            ->info("欢迎来到果汁店, %user.name%! 这是您第%times%次光临\n(输入 b 随时退出测试)")
             ->goStage('sameAsLast');
     }
 
     public function __onSameAsLast(Stage $stage) : Navigator
     {
-        if (isset($this->order)) {
-            return $stage->dialog->goStage('fruit');
-        }
-
         $mem = OrderMem::from($this);
 
         if (isset($mem->last)) {
             $order = $mem->last->toOrderStr();
+            $last = function(Dialog $dialog, Message $message) use ($mem){
+                $this->order = $mem->last;
+                return $dialog->goStage('pay');
+            };
+
             return $stage->buildTalk()
                 ->info("您上次点的是 $order; 还要一样的吗?")
                 ->wait()
                 ->hearing()
-                ->isPositive(function(Dialog $dialog) use ($mem){
-                    $this->order = $mem->last;
-                    return $dialog->next();
-                })
+                // 随便. 给用户随便一下.
+                ->isIntent(Intents\RandomInt::class, $last)
+                ->component([$this, 'readOrder'])
+                ->isPositive($last)
                 ->isNegative(new ToNext('fruit'))
                 ->end();
         }
@@ -295,55 +312,28 @@ class DrinkTask extends TaskDef
         return $stage->buildTalk()->goStage('fruit');
     }
 
-    public function __onConfirmFruit(Stage $stage) : Navigator
-    {
-        if (!isset($this->order->fruit)) {
-            return $stage->dialog->goStage('fruit');
-        }
-
-        $fruit = $this->order->fruit;
-
-        if (in_array($fruit, [Intents\WantDrinkInt::FRUITS])) {
-            return $stage->buildTalk()
-                ->info("确认您要的是 $fruit 吗? ")
-                ->wait()
-                ->hearing()
-                ->isPositive(function(Dialog $dialog){
-                    return $dialog->goStage('ifIce');
-                })
-                ->isNegative(function(Dialog $dialog){
-                    unset($this->order->fruit);
-                    return $dialog->goStage('fruit');
-                })
-                ->end();
-        }
-
-        return $stage->dialog->goStage('fruit');
-    }
-
     public function __onFruit(Stage $stage) : Navigator
     {
-        if (!isset($this->order)) {
-            $this->order = new Intents\WantDrinkInt();
-        }
-
         $avail = implode(',', Intents\WantDrinkInt::FRUITS);
-        $info = "请问您想要什么水果的果汁, 我们这儿热卖的有香蕉, 苹果, 哈密瓜";
+        $info = " 我们这儿有$avail, 请问您想要哪种口味的果汁";
 
         if (isset($this->order->fruit)) {
             $fruit = $this->order->fruit;
-
-            if (in_array($fruit, Intents\WantDrinkInt::FRUITS)){
-                return $stage->dialog->goStage('ifIce');
+            if (in_array($fruit, Intents\WantDrinkInt::FRUITS)) {
+                return $stage
+                    ->buildTalk()
+                    ->goStage('ifIce');
             }
 
-            $info = "对不起, 我们没有$fruit 口味的\n 我们现在只有 $avail.\n 请问您需要哪一种?";
+            $info = "sorry, 我们没有 $fruit, 这里有 $avail, 您看需要哪个";
         }
 
         return $stage->buildTalk()
             ->info($info)
             ->wait()
             ->hearing()
+            ->isIntent(Intents\RandomInt::class, [$this, 'doRandom'])
+            ->component([$this, 'readOrder'])
             ->fallback(function(Dialog $dialog) use ($avail) {
 
                 $dialog->say()->info(
@@ -364,6 +354,7 @@ class DrinkTask extends TaskDef
             ->info('请问要加冰吗?')
             ->wait()
             ->hearing()
+            ->is('加')
             ->isPositive(function(Dialog $dialog){
 
                 $this->order->ice = true;
@@ -376,6 +367,8 @@ class DrinkTask extends TaskDef
                 return $dialog->goStage('ifCup');
 
             })
+            ->isIntent(Intents\RandomInt::class, [$this, 'doRandom'])
+            ->component([$this, 'readOrder'])
             ->end();
     }
 
@@ -407,6 +400,8 @@ class DrinkTask extends TaskDef
             ->isNegative($wan)
             ->hasKeywords(['杯'], $bei)
             ->hasKeywords(['碗'], $wan)
+            ->isIntent(Intents\RandomInt::class, [$this, 'doRandom'])
+            ->component([$this, 'readOrder'])
             ->defaultFallback()
             ->end(function(Dialog $dialog){
 
@@ -486,9 +481,18 @@ class DrinkTask extends TaskDef
                     return $dialog->wait();
                 }
             )
+            ->isIntent(Intents\RandomInt::class, function(Dialog $dialog){
+                $dialog->say()->info("钱的事情不好随便吧...");
+                return $dialog->repeat();
+            })
+            ->isNegative(function(Dialog $dialog) : Navigator {
+                $dialog->say()->warning("不给钱就拜拜");
+                return $dialog->cancel();
+            })
             ->defaultFallback()
             ->end(function(Dialog $dialog){
-                $dialog->say()->info('请输入数字来表示金额');
+                $dialog->say()->info('请输入纯数字来表示金额');
+                return $dialog->wait();
             });
     }
 
@@ -519,8 +523,18 @@ class DrinkTask extends TaskDef
 
     public function __onDeliver(Stage $stage) : Navigator
     {
+        if (!$this->order->fulfilled) {
+            return $stage->buildTalk()
+                ->error("出错了, 数据不正确... 取消任务")
+                ->action([Redirector::class, 'cancel']);
+        }
+
+
         $str = $this->order->toOrderStr();
         $packed = $this->ifPack ? '打包好的' : '';
+
+        $mem = OrderMem::from($this);
+        $mem->last = $this->order;
 
         return $stage->buildTalk()
             ->info("这是您$packed $str, 请拿好. \n 感谢您的惠顾, 欢迎您下次光临 ")
@@ -529,18 +543,10 @@ class DrinkTask extends TaskDef
 
     public function __onChange(Stage $stage) : Navigator
     {
-        $name = $stage->name;
-
-        if (!in_array($name, ['pay', 'ifPack'])) {
-            return $stage->buildTalk()
-                ->info("收到")
-                ->goStage('fruit');
-        }
-
         return $stage->buildTalk()
             ->withSlots(['order' => $this->order->toOrderStr()])
-            ->info('您把订单改为 %order%')
-            ->next();
+            ->info('您的订单是 %order%')
+            ->goStage('fruit');
     }
 
     public function __exiting(Exiting $listener): void
@@ -550,6 +556,11 @@ class DrinkTask extends TaskDef
 
             return $dialog->cancel(true);
         });
+    }
+
+    public function __getAvail() :string
+    {
+        return implode(',', Intents\WantDrinkInt::FRUITS);
     }
 
 

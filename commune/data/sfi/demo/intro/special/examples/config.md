@@ -1,6 +1,6 @@
 description: 可配置化
 suggestions:
-    - introduce
+    - intro
     - intro.special.configurable
 examples:
 ---

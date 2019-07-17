@@ -1,8 +1,7 @@
-description: 可配置化
+description: "特性: 可配置化"
 suggestions:
-    - introduce
     - examples.config
-    - /.
+    - ./
 examples:
 ---
 
@@ -15,3 +14,7 @@ commune/chatbot 项目的实现思路是先工程, 再配置.
 - 系统可配置
 - 组件可配置
 - 对话可配置
+
+您现在看到的, 就是一个配置出来的对话组件. 源码在:
+
+https://github.com/thirdgerb/chatbot-studio/tree/master/commune/data/sfi/demo

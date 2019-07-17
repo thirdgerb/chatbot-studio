@@ -1,6 +1,6 @@
 description: 与语音相结合的应用
 suggestions:
-    - introduce
+    - intro
     - ./
     - intro.chatbot.chatClassification
     - intro.chatbot.chatInterface

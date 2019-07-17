@@ -1,6 +1,6 @@
 description: 与IM相结合的应用.
 suggestions:
-    - introduce
+    - intro
     - ./
     - intro.chatbot.chatClassification
     - intro.chatbot.chatInterface

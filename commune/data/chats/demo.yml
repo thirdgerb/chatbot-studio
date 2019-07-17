@@ -60,8 +60,12 @@ attitudes.awesome:
     - 真棒
     - 真不错
   replies:
-    - 害羞
+    - 太害羞了
     - 谢谢啦
+attitudes.stroll:
+  replies:
+    - 好的. 如果有什么需要, 请按提示与我互动.
+    - 好, 有什么需要再叫我吧
 introduce.whoareyou:
   examples:
     - 你是谁

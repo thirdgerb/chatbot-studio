@@ -1,7 +1,7 @@
-description: 多平台适用
+description: "特性: 多平台适应"
 suggestions:
-    - introduce
-    - /.
+    - intro
+    - ./
 examples:
 ---
 

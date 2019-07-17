@@ -1,7 +1,6 @@
-description: 工业级可用
+description: "目标: 工业级可用"
 suggestions:
-    - introduce
-    - /.
+    - ./
 examples:
 ---
 
@@ -17,4 +16,4 @@ commune/chatbot 项目目标是做到工业级的可用. 这意味着:
 
 目前大部分目标都基本实现, 仍需要在生产环境中反复打磨.
 
-性能部分, 现在在连接mysql, redis 和 rasa api 的情况下, 单次对话服务器响应时间在 10ms 左右, 结果令人乐观.
+性能部分, 现在在连接mysql, redis 和 rasa api 的情况下, 单次对话服务器响应时间在 10 ~ 20ms 左右, 结果令人乐观.

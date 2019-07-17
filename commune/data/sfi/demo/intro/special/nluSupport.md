@@ -1,7 +1,7 @@
-description: 支持自然语言单元
+description: "功能: 支持自然语言单元"
 suggestions:
-    - introduce
-    - /.
+    - intro
+    - ./
 examples:
 ---
 

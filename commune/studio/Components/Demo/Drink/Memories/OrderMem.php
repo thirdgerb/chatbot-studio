@@ -14,7 +14,7 @@ use Commune\Studio\Components\Demo\Drink\Intents\WantDrinkInt;
  */
 class OrderMem extends MemoryDef
 {
-    const DESCRIPTION = 'define description';
+    const DESCRIPTION = '购买的记忆';
 
     const SCOPE_TYPES = [Scope::USER_ID];
 

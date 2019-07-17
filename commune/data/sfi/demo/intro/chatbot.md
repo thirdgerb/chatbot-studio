@@ -3,7 +3,7 @@ suggestions:
     - chatbot.chatInterface
     - chatbot.chatClassification
     - chatbot.chatApplication
-    - whatIsConversation
+    - conversation
 examples:
     - 什么是对话机器人
     - 对话机器人是什么

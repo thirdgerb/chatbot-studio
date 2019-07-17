@@ -12,6 +12,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
  * @property string $fruit
  * @property bool $ice
  * @property bool $cup
+ * @property-read bool $fulfilled
  */
 class WantDrinkInt extends NavigateIntent
 {
@@ -41,17 +42,25 @@ class WantDrinkInt extends NavigateIntent
     public function toOrderStr() : string
     {
         $fruit = $this->fruit;
-        $ice = $this->ice ?? false;
-        $cup = $this->cup ?? false;
+        $ice = $this->ice;
+        $cup = $this->cup;
 
         if (empty($fruit)) {
             return '';
         }
 
-        $ifIce = $ice ? '加冰' : '不加冰';
-        $ifCup = $cup ? '杯装' : '碗装';
+        $ifIce = isset($ice) ? ($ice ? '加冰, ' : '不加冰, ') : '';
+        $ifCup = isset($cup) ? ($cup ? '杯装' : '碗装') : '';
 
-        return "$fruit 口味的果汁, $ifIce, $ifCup";
+        return "$fruit 口味的果汁. $ifIce$ifCup";
     }
 
+
+    public function __getFulfilled() : bool
+    {
+        return isset($this->fruit)
+            && isset($this->cup)
+            && isset($this->ice)
+            && in_array($this->fruit, self::FRUITS);
+    }
 }

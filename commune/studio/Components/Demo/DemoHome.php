@@ -22,6 +22,7 @@ use Commune\Chatbot\OOHost\Directing\Navigator;
 use Commune\Demo\App\Cases\Questionnaire\ReadPersonality;
 use Commune\Demo\App\Cases\Wheather\TellWeatherInt;
 use Commune\Studio\Components\Demo\Cases\CaseListInt;
+use Commune\Studio\Components\Demo\Cases\ChatTask;
 use Commune\Studio\Components\Demo\Drink\DrinkTask;
 use Commune\Studio\Components\Demo\Guest\GuessNumTask;
 use Commune\Studio\Components\Demo\Memories\UserStatus;
@@ -107,22 +108,22 @@ class DemoHome extends OOContext
 
         $menu = array_merge($menu, [
             '测试用例: 询问天气' => 'weather',
-            '测试用例: 多轮对话购买饮料' => DrinkTask::class,
+            '测试用例: 多轮对话购买饮料' => 'drink',
+            '测试用例: 自然语言闲聊' => ChatTask::class,
             '测试用例: 15秒知道您的性格' => ReadPersonality::class,
             '测试用例: 二分法猜数字小游戏' => GuessNumTask::class,
             '测试命令: 输入 #help 查看命令' => function(Dialog $dialog){
                 $dialog->say()->info("输入 #help 查看命令, 输入 #repeat 继续");
                 return $dialog->wait();
             },
-            '测试管理工具: 查看 rasa nlu 意图识别' => RasaManagerInt::class,
-            Guide\GuideScript::class,
-            CaseListInt::class,
+            '测试工具: 检查 rasa nlu 识别的意图' => RasaManagerInt::class,
+            '更多测试: 测试用例列表' => CaseListInt::class,
             'commune/chatbot 项目介绍' => 'toIntro',
+            '本 demo 使用指引' => Guide\GuideScript::class,
             '结束会话' => QuitInt::class,
         ]);
 
         return $stage
-            ->onFallback($this->callContinueTo('menu'))
             ->buildTalk()
             ->toStage()
             ->component(
@@ -150,6 +151,11 @@ EOF
                 })
             );
 
+    }
+    
+    public function __onDrink(Stage $stage) : Navigator
+    {
+        return $stage->sleepTo(DrinkTask::class, $this->callContinueTo('menu'));
     }
 
     public function __onWeather(Stage $stage) : Navigator
@@ -210,7 +216,7 @@ EOF
     public function __onIntroduce(Stage $stage) : Navigator
     {
         return $stage->sleepTo(
-            'sfi.demo.introduce',
+            'sfi.demo.intro',
             function(Dialog $dialog) {
                 $dialog->say()->info('项目介绍结束');
                 return $dialog->goStage('menu');

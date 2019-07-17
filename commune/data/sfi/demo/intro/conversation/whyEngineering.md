@@ -1,6 +1,6 @@
 description: 为何用工程方法实现多轮对话
 suggestions:
-    - introduce
+    - intro
     - ./
 examples:
 ---

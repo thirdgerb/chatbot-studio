@@ -1,6 +1,6 @@
 description: 使用 laravel 搭建 studio
 suggestions:
-    - introduce
+    - intro
     - ./
 examples:
 ---

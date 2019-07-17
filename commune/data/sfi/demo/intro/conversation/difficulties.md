@@ -1,6 +1,6 @@
-description: 复杂多轮对话技术上的难点
+description: 复杂多轮对话技术难点
 suggestions:
-    - introduce
+    - intro
     - ./
 examples:
 ---
