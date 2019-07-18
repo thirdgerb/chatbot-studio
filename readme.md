@@ -1,7 +1,14 @@
 
 developing   开发中....
 
-commune/chatbot 项目在 laravel 中搭建的 studio.
+多轮对话机器人框架 commune/chatbot 项目在 laravel 中搭建的 studio.
+
+
+查看 Demo 请搜索微信公众号 CommuneChatbot
+
+![wechat-qrcode](/docs/img/commune-qrcode.bmp)
+
+交流qq群: 907985715
 
 
 ### 确认依赖
