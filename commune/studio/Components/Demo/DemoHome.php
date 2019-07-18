@@ -11,6 +11,7 @@ use Commune\Chatbot\App\Components\Predefined\Navigation\QuitInt;
 use Commune\Chatbot\App\Components\Rasa\Contexts\RasaManagerInt;
 use Commune\Chatbot\App\Components\SimpleChat\Callables\SimpleChatAction;
 use Commune\Chatbot\App\Traits\AskContinueTrait;
+use Commune\Chatbot\Blueprint\Conversation\User;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
@@ -67,12 +68,17 @@ class DemoHome extends OOContext
         $this->loginTimes = $loginTimes;
         return $stage
             ->onFallback([Redirector::class, 'repeat'])
-            ->talk(function(Dialog $dialog){
+            ->talk(function(Dialog $dialog, User $user){
 
                 $dialog->say([
                         'times' => $this->loginTimes
                     ])
                     ->info('demo.startConversation');
+
+                if ($user->getName() === 'guest') {
+                    $dialog->say()->warning("(由于无权限调用用户信息, 所以无法获取您名字, 见谅)");
+                }
+
 
                 return $dialog->goStage('menu');
 
@@ -107,8 +113,8 @@ class DemoHome extends OOContext
         }
 
         $menu = array_merge($menu, [
-            '测试用例: 询问天气' => 'weather',
             '测试用例: 多轮对话购买饮料' => 'drink',
+            '测试用例: 询问天气' => 'weather',
             '测试用例: 自然语言闲聊' => ChatTask::class,
             '测试用例: 15秒知道您的性格' => ReadPersonality::class,
             '测试用例: 二分法猜数字小游戏' => GuessNumTask::class,
