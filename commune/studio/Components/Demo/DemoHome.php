@@ -103,16 +103,7 @@ class DemoHome extends OOContext
      */
     public function __onMenu(Stage $stage) : Navigator
     {
-
-        if (!$this->toldWhatToDo) {
-            $menu = [
-                '这个 demo 能做些什么?' => 'help',
-            ];
-        } else {
-            $menu = [];
-        }
-
-        $menu = array_merge($menu, [
+        $menu = [
             '测试用例: 多轮对话购买饮料' => 'drink',
             '测试用例: 询问天气' => 'weather',
             '测试用例: 自然语言闲聊' => ChatTask::class,
@@ -127,7 +118,7 @@ class DemoHome extends OOContext
             'commune/chatbot 项目介绍' => 'toIntro',
             '本 demo 使用指引' => Guide\GuideScript::class,
             '结束会话' => QuitInt::class,
-        ]);
+        ];
 
         return $stage
             ->buildTalk()
