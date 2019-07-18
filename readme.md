@@ -6,7 +6,7 @@ commune/chatbot 项目在 laravel 中搭建的 studio.
 
 ### 确认依赖
 
-- swoole 4.8
+- swoole 4.x
 - mysql
 - redis
 

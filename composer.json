@@ -10,6 +10,7 @@
     "require": {
         "php": "^7.2",
         "commune/chatbot-wechat": "dev-master",
+        "commune/chatbot-laravel": "dev-master",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
@@ -61,19 +62,5 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ]
-    },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../chatbot-laravel"
-        },
-        {
-            "type": "path",
-            "url": "../chatbot"
-        },
-        {
-            "type": "path",
-            "url": "../chatbot-wechat"
-        }
-    ]
+    }
 }
