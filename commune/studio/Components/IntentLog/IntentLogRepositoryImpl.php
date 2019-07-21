@@ -40,10 +40,19 @@ class IntentLogRepositoryImpl implements IntentLogRepository
             return;
         }
 
+        $text = $message->getTrimmedText();
+
+        // 单字符不认为有语义.
+        if (is_numeric($text) || preg_match('/^\w$/', $text)) {
+            return;
+        }
+
         $data = TableSchema::getScopeFromSession($session);
+        $data['message_text'] = $text;
         $data['user_name'] = $conversation->getUser()->getName();
         $data['message_type'] = $message->getMessageType();
-        $data['message_text'] = $message->getTrimmedText();
+
+
 
         $matched = $session->getMatchedIntent();
 

@@ -11,7 +11,7 @@ use Commune\Chatbot\OOHost\Emotion\Feeling;
 
 class FeelingServiceProvider extends BaseServiceProvider
 {
-    const IS_REACTOR_SERVICE_PROVIDER = true;
+    const IS_PROCESS_SERVICE_PROVIDER = true;
 
 
     protected $intentMap = [

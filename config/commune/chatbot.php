@@ -22,7 +22,7 @@ return [
     ],
 
     // 在这里可以预先绑定一些用 Option 类封装的配置.
-    // 会将该配置预绑定到reactor容器上, 作为单例.
+    // 会将该配置预绑定到worker process容器上, 作为单例.
     // 有三种绑定方式:
     // 1. 只写类名, 默认使用 stub 里的配置.
     // 2. 类名 => 数组,  会用数组内的值覆盖 stub 的相关参数.
@@ -85,8 +85,8 @@ return [
     // 预定义的系统服务, 在这里可更改 service provider
     'baseServices' => \Commune\Chatbot\Config\Services\BaseServiceConfig::stub(),
 
-    // 在reactor中注册的服务, 多个请求共享
-    'reactorProviders' => [
+    // 在worker中注册的服务, 多个请求共享
+    'processProviders' => [
         // 基础的类加载
         Studio\Providers\StudioServiceProvider::class,
         // 默认的情感单元, 可以把意图或者message 映射成情感
