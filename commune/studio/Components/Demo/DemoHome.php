@@ -107,7 +107,7 @@ class DemoHome extends OOContext
         $menu = [
             '测试用例: 多轮对话购买饮料' => 'drink',
             '测试用例: 询问天气' => 'weather',
-            '测试用例: 自然语言闲聊' => ChatTask::class,
+            '测试用例: 自然语言(语音或文字)闲聊' => ChatTask::class,
             '测试用例: 15秒知道您的性格' => ReadPersonality::class,
             '测试用例: 二分法猜数字小游戏' => GuessNumTask::class,
             '测试命令: 输入 #help 查看命令' => function(Dialog $dialog){

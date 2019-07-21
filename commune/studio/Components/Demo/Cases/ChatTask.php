@@ -53,12 +53,15 @@ EOF
             <<<EOF
 可以试着和我说说 "你好" 类似的问候语测试. 输入 'b' 退出测试.
 
+(支持微信语音)
+
 可在此 https://github.com/thirdgerb/chatbot-studio/blob/master/commune/data/chats/demo.yml 看到所有已配置的闲聊内容.
 
 由于语料非常少, 目前自然语言识别效果有限. 您可以尝试以下对白:
 
 - 你好
 - 讲笑话
+- 后天北京的天气如何
 - 你好蠢啊
 - 谢谢
 - 如何联系你

@@ -25,7 +25,6 @@ class UserCommands extends UserCommandsPipe
         Navigation\RepeatInt::class,
         Navigation\RestartInt::class,
         RasaManagerInt::class,
-        Analysis\WhereCmd::class,
         Analysis\ContextRepoCmd::class,
         Analysis\WhoAmICmd::class,
         RunningSpyCmd::class,
