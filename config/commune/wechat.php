@@ -46,7 +46,4 @@ return [
         'callback' => '/examples/oauth_callback.php',
     ],
 
-    'defaults' => [
-        'nickname' => 'guest',
-    ],
 ];

@@ -12,6 +12,7 @@ use Commune\Chatbot\App\Components\Rasa\Contexts\RasaManagerInt;
 use Commune\Chatbot\App\Components\SimpleChat\Callables\SimpleChatAction;
 use Commune\Chatbot\App\Traits\AskContinueTrait;
 use Commune\Chatbot\Blueprint\Conversation\User;
+use Commune\Chatbot\Blueprint\Message\Media\ImageMsg;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\OOHost\Context\Depending;
 use Commune\Chatbot\OOHost\Context\Exiting;
@@ -133,6 +134,13 @@ class DemoHome extends OOContext
                     $hearing
                         ->isAnyIntent()
                         ->interceptor(new SimpleChatAction())
+                        ->isInstanceOf(
+                            ImageMsg::class,
+                            function(Dialog $dialog){
+                                $dialog->say()->info("sorry, 暂时不支持图片");
+                                return $dialog->wait();
+                            }
+                        )
                         ->end(function(Dialog $dialog){
 
                             $dialog->say()
