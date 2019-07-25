@@ -513,6 +513,8 @@ class DrinkTask extends TaskDef
             ->hearing()
             ->isIntent(Intents\RandomInt::class, $pack)
             ->isPositive($pack)
+            ->is('打包', $pack)
+            ->is('打', $pack)
             ->isNegative(function(Dialog $dialog){
                 $this->ifPack = false;
                 return $dialog->next();
