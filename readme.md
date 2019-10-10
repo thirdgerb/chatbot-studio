@@ -1,5 +1,12 @@
 
-developing   开发中....
+
+# deprecated
+
+本项目停止开发, studio 框架改用和 swoole 协程结合比较好的 [hyperf](https://github.com/hyperf-cloud/hyperf)
+
+替代项目是[commune/studio-hyperf](https://github.com/thirdgerb/studio-hyperf)
+
+-----
 
 多轮对话机器人框架 commune/chatbot 项目在 laravel 中搭建的 studio.
 
